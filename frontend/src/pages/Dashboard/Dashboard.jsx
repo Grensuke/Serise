@@ -10,7 +10,7 @@ const StatCard = ({children, className}) => (
 
 export default function Dashboard(){
   const [conversations, setConversations] = useState([])
-  const [energy, setEnergy] = useState([])
+  const [_energy, setEnergy] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(()=>{

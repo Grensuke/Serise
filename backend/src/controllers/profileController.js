@@ -1,6 +1,6 @@
 const Profile = require('../models/Profile');
 
-exports.getProfile = async (req, res) => {
+exports.getProfile = async (req, res, next) => {
 	try {
 		const userId = req.user && req.user.id;
 		let profile = await Profile.findOne({ user: userId });
@@ -9,7 +9,7 @@ exports.getProfile = async (req, res) => {
 		}
 		return res.json(profile);
 	} catch (e) {
-		console.error(e);
-		return res.status(500).json({ msg: 'server error' });
+		console.error('profile get error:', e.message);
+		return next(e);
 	}
 };

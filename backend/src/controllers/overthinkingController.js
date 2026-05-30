@@ -1,7 +1,7 @@
 const OverthinkingEntry = require('../models/OverthinkingEntry');
 const aiService = require('../services/aiService');
 
-exports.submit = async (req, res) => {
+exports.submit = async (req, res, next) => {
 	try {
 		const userId = req.user && req.user.id;
 		const { thought } = req.body;
@@ -10,18 +10,18 @@ exports.submit = async (req, res) => {
 		const entry = await OverthinkingEntry.create({ user: userId, thought, aiResponse: ai.text || JSON.stringify(ai) });
 		return res.json(entry);
 	} catch (e) {
-		console.error(e);
-		return res.status(500).json({ msg: 'server error' });
+		console.error('overthinking submit error:', e.message);
+		return next(e);
 	}
 };
 
-exports.list = async (req, res) => {
+exports.list = async (req, res, next) => {
 	try {
 		const userId = req.user && req.user.id;
 		const items = await OverthinkingEntry.find({ user: userId }).sort({ createdAt: -1 }).limit(100);
 		return res.json(items);
 	} catch (e) {
-		console.error(e);
-		return res.status(500).json({ msg: 'server error' });
+		console.error('overthinking list error:', e.message);
+		return next(e);
 	}
 };

@@ -1,199 +1,202 @@
-/* Preferred local font (place files into public/fonts/). */
-@font-face {
-  font-family: 'Fleur De Leah';
-  src: url('/fonts/FleurDeLeah-Regular.woff2') format('woff2'),
-       url('/fonts/FleurDeLeah-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap');
 
 :root {
-	--nav-padding: 28px;
-	--max-width: 1280px;
+  --nav-padding: 28px;
+  --max-width: 1280px;
 }
 
 .header {
-	width: 100%;
-	background: #fff;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 1000;
-	box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  width: 100%;
+  background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
 .container {
-	max-width: var(--max-width);
-	margin: 0 auto;
-	padding: 0 var(--nav-padding);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	height: 96px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--nav-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
 }
 
 .brandWrap {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .logo {
-	font-family: 'Fleur De Leah', cursive, 'Georgia', serif;
-	font-size: 56px;
-	line-height: 1;
-	color: #000;
-	letter-spacing: 0.5px;
-	transform: translateY(2px);
+  font-family: 'Fleur De Leah', cursive, Georgia, serif;
+  font-size: clamp(40px, 8vw, 56px);
+  line-height: 1;
+  color: #000;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  transform: translateY(2px);
+}
+
+.logo:hover {
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoutDesktop {
+  display: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(176, 0, 32, 0.25);
+  background: transparent;
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: background 150ms;
+}
+
+.logoutDesktop:hover {
+  background: rgba(176, 0, 32, 0.06);
 }
 
 .hamburger {
-	display: inline-flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 8px;
-	background: transparent;
-	border: none;
-	padding: 8px;
-	cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
 }
 
 .hamburger span {
-	display: block;
-	width: 36px;
-	height: 3px;
-	background: #111;
-	border-radius: 2px;
+  display: block;
+  width: 36px;
+  height: 3px;
+  background: #111;
+  border-radius: 2px;
+  transition: transform 250ms ease, opacity 200ms ease;
 }
 
-/* marker class applied at runtime when menu is open */
-.open { --is-open: 1; }
-
-/* animated X state */
 .hamburger.open span:nth-child(1) {
-	transform: translateY(6px) rotate(45deg);
+  transform: translateY(11px) rotate(45deg);
 }
+
 .hamburger.open span:nth-child(2) {
-	opacity: 0;
-	transform: scaleX(0);
+  opacity: 0;
+  transform: scaleX(0);
 }
+
 .hamburger.open span:nth-child(3) {
-	transform: translateY(-6px) rotate(-45deg);
+  transform: translateY(-11px) rotate(-45deg);
 }
 
-.hamburger span {
-	transition: transform 250ms ease, opacity 200ms ease;
-}
-
-/* Mobile menu dropdown */
 .mobileMenu {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 100%;
-	background: #fff;
-	box-shadow: 0 8px 24px rgba(16,24,40,0.08);
-	overflow: hidden;
-	max-height: 0;
-	opacity: 0;
-	transform: translateY(-6px);
-	transition: transform 260ms ease, max-height 360ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease;
-	z-index: 1100;
-	pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: transform 260ms ease, max-height 360ms cubic-bezier(0.2, 0.9, 0.2, 1), opacity 220ms ease;
+  z-index: 1100;
+  pointer-events: none;
 }
+
 .mobileMenu.open {
-	max-height: 420px;
-	opacity: 1;
-	transform: translateY(0);
-	pointer-events: auto;
+  max-height: 520px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .menuList {
-	list-style: none;
-	margin: 0;
-	padding: 16px 20px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-.menuItem a {
-	display: block;
-	padding: 12px 14px;
-	color: #111;
-	text-decoration: none;
-	font-weight: 600;
-}
-.menuItem a:hover {
-	background: rgba(75,0,130,0.04);
-	color: var(--accent);
+  list-style: none;
+  margin: 0;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
+.menuItem a,
 .menuItem button {
-	display: block;
-	padding: 12px 14px;
-	color: #111;
-	background: transparent;
-	border: none;
-	text-align: left;
-	width: 100%;
-	font-weight: 600;
-	cursor: pointer;
+  display: block;
+  padding: 12px 14px;
+  color: #111;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
 }
-.menuItem button:hover{ background: rgba(75,0,130,0.04); color: var(--accent) }
 
-.logoutBtn{ color:#b60f0f }
+.menuItem a:hover,
+.menuItem button:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
 
-/* Keep the hamburger evenly spaced on large screens too */
+.logoutBtn {
+  color: var(--danger) !important;
+}
+
+.logoutBtn:hover {
+  background: rgba(176, 0, 32, 0.06) !important;
+}
+
+.hamburger:focus {
+  outline: 2px solid rgba(0, 0, 0, 0.12);
+  outline-offset: 4px;
+}
+
 @media (min-width: 900px) {
-	.container {
-		padding-left: 40px;
-		padding-right: 40px;
-		height: 120px;
-	}
+  .container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
 
-	.logo {
-		font-size: 72px;
-	}
+  .logo {
+    font-size: 72px;
+  }
+
+  .logoutDesktop {
+    display: inline-flex;
+  }
+
+  .mobileMenu {
+    left: auto;
+    right: var(--nav-padding);
+    width: 320px;
+    max-width: 40%;
+    border-radius: var(--radius-md);
+  }
+
+  .menuList {
+    padding: 12px 14px;
+  }
 }
-
-/* On wide screens show the dropdown as a compact right-aligned menu */
-@media (min-width: 900px) {
-	.mobileMenu {
-		/* don't span full width on desktop, align to right near the hamburger */
-		left: auto;
-		right: var(--nav-padding);
-		width: 320px;
-		max-width: 40%;
-		border-radius: 10px;
-	}
-
-	.menuList {
-		padding: 12px 14px;
-	}
-}
-
-/* Desktop inline menu removed — hamburger dropdown is primary navigation on all screen sizes */
 
 @media (max-width: 480px) {
-	.logo {
-		font-size: 40px;
-	}
-
-	.hamburger span {
-		width: 28px;
-	}
-}
-
-/* Optional small focus style for accessibility */
-.hamburger:focus {
-	outline: 2px solid rgba(0,0,0,0.12);
-	outline-offset: 4px;
-}
-
-/* If you add a mobile menu later, keep space for it */
-.brandWrap,
-.hamburger {
-	flex: 0 0 auto;
+  .hamburger span {
+    width: 28px;
+  }
 }

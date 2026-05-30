@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
 
-exports.hash = (pw) => bcrypt.hashSync(pw, 10);
-exports.compare = (pw, hash) => bcrypt.compareSync(pw, hash);
+// Use async functions to prevent event-loop blocking
+exports.hash = async (pw) => bcrypt.hash(pw, 10);
+exports.compare = async (pw, hash) => bcrypt.compare(pw, hash);

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
+import AppLayout from '../../components/layout/AppLayout'
+import PageHeader from '../../components/layout/PageHeader'
 import styles from './Simulator.module.css'
-import { apiFetch } from '../../utils/api'
+import { apiFetch, authHeaders } from '../../utils/api'
 
 const SCENARIOS = [
   { id: 'smalltalk', title: 'Small Talk Practice', icon: '💬', desc: 'Practice casual conversation starters.' },
@@ -42,9 +44,8 @@ export default function Simulator(){
     if(!scenario) return restart()
     setLoading(true)
     try{
-      const token = localStorage.getItem('serise_token')
       const prompt = `Start the scenario '${scenario.title}' as a ${role} using a ${tone} tone and ${difficulty} difficulty. Provide one opening reply.`
-      const res = await apiFetch('/api/simulate', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify({ prompt, scenario: scenario.id }) })
+      const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: scenario.id }) })
       const data = await res.json()
       const reply = data.result?.reply || data.result || data.reply || `Hello — let's start.`
       setMessages([{ id:'sys', who:'ai', text: `Scenario: ${scenario.title}.` }, { id:Date.now(), who:'ai', text: reply }])
@@ -63,9 +64,8 @@ export default function Simulator(){
     setAiTyping(true)
 
     try{
-      const token = localStorage.getItem('serise_token')
       const body = { prompt: input, scenario: scenario ? scenario.id : 'general', tone, difficulty, role }
-      const res = await apiFetch('/api/simulate', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify(body) })
+      const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify(body) })
       const data = await res.json()
       // aiService.simulate returns { reply: '...' } or stub
       const reply = data.result?.reply || data.result || (data.reply) || `Simulated reply (stub) to: ${input}`
@@ -87,61 +87,63 @@ export default function Simulator(){
 
   async function coachAnalyze(text){
     // ask backend to simulate coach suggestions by calling simulate with a targeted prompt
-    const token = localStorage.getItem('serise_token')
     const coachPrompt = `Analyze tone and suggest 3 alternative replies for: "${text}" in a ${tone} tone.`
-    const res = await apiFetch('/api/simulate', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify({ prompt: coachPrompt, scenario: scenario?.id || 'coach' }) })
+    const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt: coachPrompt, scenario: scenario?.id || 'coach' }) })
     const data = await res.json()
     return data.result?.reply || data.result || data.reply || 'No suggestions'
   }
 
   async function saveToVault(analysis){
     // Export current chat to Conversation Vault via POST /api/conversations
-    const token = localStorage.getItem('serise_token')
     const transcript = messages.map(m=>`${m.who}: ${m.text}`).join('\n')
-    const title = scenario ? `${scenario.title} practice` : 'Simulation'
     const body = { summary: transcript.slice(0,300), transcript, mood: 'confident', tags: ['simulation'] }
     if(analysis) body.analysis = analysis
     try{
-      const res = await apiFetch('/api/conversations', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify(body) })
+      const res = await apiFetch('/api/conversations', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify(body) })
       if(res.ok) alert('Saved to Vault')
       else alert('Save failed')
     }catch(e){ alert('Save failed') }
   }
 
   return (
-    <div className={styles.page}>
+    <AppLayout>
+    <div className={`page-shell ${styles.page}`}>
       {stage === 'home' ? (
-        <div className={styles.landing}>
-          <h1>Practice Conversations Safely</h1>
-          <p className={styles.subtitle}>Choose a scenario and talk freely — the AI responds like a real person.</p>
+        <>
+          <PageHeader
+            title="Conversation Simulator"
+            subtitle="Choose a scenario and practice safely — the AI responds like a real person."
+          />
           <div className={styles.scenarioGrid}>
             {SCENARIOS.map(s=> (
-              <div key={s.id} className={styles.scenarioCard}>
+              <div key={s.id} className={`ui-card ${styles.scenarioCard}`}>
                 <div className={styles.icon}>{s.icon}</div>
                 <div className={styles.scTitle}>{s.title}</div>
                 <div className={styles.scDesc}>{s.desc}</div>
                 <div className={styles.scActions}>
-                  <button className="btn" onClick={()=>startScenario(s)}>Start</button>
+                  <button type="button" className="btn btn-primary" onClick={()=>startScenario(s)}>Start</button>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </>
       ) : (
         <div className={styles.chatWrap}>
+          <button type="button" className={styles.chatBack} onClick={() => setStage('home')}>
+            ← Back to scenarios
+          </button>
           <div className={styles.chatMain}>
-            <div className={styles.chatHeader}>
+            <div className={`ui-card ${styles.chatHeader}`}>
               <div>
                 <h2>{scenario?.title}</h2>
                 <div className={styles.chatMeta}><small>{scenario?.desc}</small></div>
               </div>
                 <div className={styles.chatControls}>
-                <button className="btn" onClick={restartWithAI} disabled={loading}>Restart</button>
+                <button type="button" className="btn" onClick={restartWithAI} disabled={loading}>Restart</button>
                 <label className={styles.controlInline}>
-                  <select value={tone} onChange={async e=>{ const t=e.target.value; setTone(t); // get a quick preview from AI
-                      const token = localStorage.getItem('serise_token')
+                  <select value={tone} onChange={async e=>{ const t=e.target.value; setTone(t);
                       const prompt = `Provide a one-line example reply in a ${t} tone for the scenario: ${scenario?.title || ''}`
-                      try{ const res = await apiFetch('/api/simulate', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify({ prompt, scenario: scenario?.id }) }); const d=await res.json(); setTonePreview(d.result?.reply||d.result||d.reply||'') }catch(err){ setTonePreview('') }
+                      try{ const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: scenario?.id }) }); const d=await res.json(); setTonePreview(d.result?.reply||d.result||d.reply||'') }catch(err){ setTonePreview('') }
                     }}>
                     <option>Friendly</option>
                     <option>Formal</option>
@@ -152,7 +154,7 @@ export default function Simulator(){
                 </label>
 
                 <label className={styles.controlInline}>
-                  <select value={difficulty} onChange={async e=>{ const d=e.target.value; setDifficulty(d); const token = localStorage.getItem('serise_token'); const prompt = `As difficulty ${d}, give one hint or behavior change for the AI in scenario ${scenario?.title || ''}`; try{ const res = await apiFetch('/api/simulate', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify({ prompt, scenario: scenario?.id }) }); const data=await res.json(); setDifficultyNote(data.result?.reply||data.result||data.reply||'') }catch(err){ setDifficultyNote('') } }}>
+                  <select value={difficulty} onChange={async e=>{ const d=e.target.value; setDifficulty(d); const prompt = `As difficulty ${d}, give one hint or behavior change for the AI in scenario ${scenario?.title || ''}`; try{ const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: scenario?.id }) }); const data=await res.json(); setDifficultyNote(data.result?.reply||data.result||data.reply||'') }catch(err){ setDifficultyNote('') } }}>
                     <option>Easy</option>
                     <option>Normal</option>
                     <option>Social Challenge</option>
@@ -160,20 +162,18 @@ export default function Simulator(){
                 </label>
 
                 <label className={styles.controlInline}>
-                  <select value={role} onChange={async e=>{ const r=e.target.value; setRole(r); const token = localStorage.getItem('serise_token'); const prompt = `You are changing role to ${r} for scenario ${scenario?.title||''}. Provide a one-line example reply and role description.`; try{ const res = await apiFetch('/api/simulate', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify({ prompt, scenario: scenario?.id }) }); const data=await res.json(); setRoleNote(data.result?.reply||data.result||data.reply||'') }catch(err){ setRoleNote('') } }}>
+                  <select value={role} onChange={async e=>{ const r=e.target.value; setRole(r); const prompt = `You are changing role to ${r} for scenario ${scenario?.title||''}. Provide a one-line example reply and role description.`; try{ const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: scenario?.id }) }); const data=await res.json(); setRoleNote(data.result?.reply||data.result||data.reply||'') }catch(err){ setRoleNote('') } }}>
                     <option value="classmate">Classmate</option>
                     <option value="teacher">Teacher</option>
                     <option value="friend">Friend</option>
                     <option value="stranger">Stranger</option>
                   </select>
                 </label>
-                <button className="btn" onClick={async ()=>{
-                  // run AI analysis before saving and persist analysis with conversation
-                  const token = localStorage.getItem('serise_token')
+                <button type="button" className="btn" onClick={async ()=>{
                   const transcript = messages.map(m=>`${m.who}: ${m.text}`).join('\n')
                   const prompt = `Return ONLY a JSON object with keys: summary (one-line), tone (label), confidence (0-100 number), keyPoints (array of up to 3 short strings). Do not include any other text. Conversation:\n${transcript}`
                   try{
-                    const res = await apiFetch('/api/simulate', { method:'POST', headers: {...(token?{Authorization:`Bearer ${token}`}:{}), 'Content-Type':'application/json'}, body: JSON.stringify({ prompt, scenario: 'analysis' }) })
+                    const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'analysis' }) })
                     const data = await res.json()
                     const reply = data.result?.reply || data.result || data.reply || ''
                     let analysisObj = null
@@ -202,12 +202,12 @@ export default function Simulator(){
             </div>
 
             <div className={styles.chatInputRow}>
-              <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Type your message" onKeyDown={e=>{ if(e.key==='Enter') send() }} />
-              <button className="btn primary" onClick={send}>Send</button>
+              <input className="form-input" value={input} onChange={e=>setInput(e.target.value)} placeholder="Type your message" onKeyDown={e=>{ if(e.key==='Enter') send() }} />
+              <button type="button" className="btn btn-primary" onClick={send}>Send</button>
             </div>
           </div>
 
-          <aside className={styles.coachPanel}>
+          <aside className={`ui-card ${styles.coachPanel}`}>
             <h3>Coach View</h3>
             <div className={styles.coachSection}>
               <strong>Tone Analysis</strong>
@@ -248,5 +248,6 @@ export default function Simulator(){
         </div>
       )}
     </div>
+    </AppLayout>
   )
 }

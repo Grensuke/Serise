@@ -3,9 +3,15 @@ const EnergyLog = require('../models/EnergyLog');
 exports.log = async (req, res, next) => {
 	try {
 		const userId = req.user && req.user.id;
-		const { level, note } = req.body;
+		const level = Number(req.body.level);
+		const note = req.body.note != null ? String(req.body.note) : '';
+
+		if (Number.isNaN(level) || level < 0 || level > 100) {
+			return res.status(400).json({ msg: 'level must be a number between 0 and 100' });
+		}
+
 		const entry = await EnergyLog.create({ user: userId, level, note });
-		return res.json(entry);
+		return res.status(201).json(entry);
 	} catch (e) {
 		console.error('energy log error:', e.message);
 		return next(e);

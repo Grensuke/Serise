@@ -16,31 +16,32 @@ import NavBar from '../components/layout/Navbar';
 
 function RouterWithNav() {
   const location = useLocation();
-  // Hide NavBar on any auth route (login/signup/etc.)
   const hideNav = location.pathname.startsWith('/auth');
 
   return (
     <>
       {!hideNav && <NavBar />}
-      <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
-        <Route path="/auth/login" element={<Login/>} />
-        <Route path="/auth/signup" element={<Signup/>} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
-        <Route path="/vault" element={<ProtectedRoute><MemoryVault/></ProtectedRoute>} />
-        <Route path="/energy" element={<ProtectedRoute><EnergyTracker/></ProtectedRoute>} />
-        <Route path="/overthinking" element={<ProtectedRoute><Overthinking/></ProtectedRoute>} />
-        <Route path="/simulate" element={<ProtectedRoute><Simulator/></ProtectedRoute>} />
-        <Route path="/scripts" element={<ProtectedRoute><Scripts/></ProtectedRoute>} />
-        <Route path="/goals" element={<ProtectedRoute><Goals/></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><ProfilePage/></ProtectedRoute>} />
-      </Routes>
+      <div className={hideNav ? undefined : 'app-content'}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
+          <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/vault" element={<ProtectedRoute><MemoryVault /></ProtectedRoute>} />
+          <Route path="/energy" element={<ProtectedRoute><EnergyTracker /></ProtectedRoute>} />
+          <Route path="/overthinking" element={<ProtectedRoute><Overthinking /></ProtectedRoute>} />
+          <Route path="/simulate" element={<ProtectedRoute><Simulator /></ProtectedRoute>} />
+          <Route path="/scripts" element={<ProtectedRoute><Scripts /></ProtectedRoute>} />
+          <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        </Routes>
+      </div>
     </>
-  )
+  );
 }
 
-export default function AppRouter(){
+export default function AppRouter() {
   return (
     <BrowserRouter>
       <RouterWithNav />

@@ -1,151 +1,108 @@
-# Git Cleanup & Secret Removal Steps
+# Git Cleanup & Secret Removal
 
-Run these commands from your repository root (`C:\Users\STARK\Documents\Serise\Serise`).
+Use this guide if `backend/.env` or other secrets were **committed or pushed** to Git. Run commands from the repository root.
 
-## Step 1: Stop tracking `.env` immediately (local only)
+## Step 1: Stop tracking `.env` (keep local file)
 
 ```powershell
 git rm --cached backend/.env
-git commit -m "Remove committed .env file from tracking"
+git commit -m "chore: stop tracking backend .env"
 ```
 
-This removes the file from Git's index without deleting it locally. **Do this first to prevent accidental re-commits.**
+This removes the file from Git index only — your local `backend/.env` stays on disk.
 
-## Step 2: Purge from Git history (removes from all past commits)
+## Step 2: Purge from Git history
 
-### Option A: Using `git filter-branch` (standard Git)
+Only needed if secrets were **pushed to a remote**. Rewriting history affects all clones.
+
+### Option A: BFG Repo-Cleaner (recommended)
 
 ```powershell
-# Purge backend/.env from ALL commits
-git filter-branch --tree-filter 'Remove-Item -Path "backend\.env" -Force -ErrorAction SilentlyContinue' -- --all
-
-# Clean up refs
+# Download: https://rtyley.github.io/bfg-repo-cleaner/
+bfg --delete-files ".env"
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
-
-# Force push to remote (only if you have permission)
-git push origin main --force-with-lease
-git push origin arisetime --force-with-lease
+git push origin YOUR_BRANCH --force-with-lease
 ```
 
-**⚠️ WARNING**: Force-push rewrites history. Only do this if:
-- You are the only developer OR
-- All team members are aware and can re-clone
-- You have backups
-
-### Option B: Using BFG Repo-Cleaner (safer, faster)
+### Option B: git filter-branch
 
 ```powershell
-# Download BFG (or use if already installed)
-# https://rtyley.github.io/bfg-repo-cleaner/
-
-# Create a list of files to remove
-"backend\.env" | Out-File sensitive-files.txt
-
-# Run BFG to remove sensitive files
-bfg --delete-files sensitive-files.txt
-
-# Cleanup
+git filter-branch --tree-filter "rm -f backend/.env" -- --all
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
-
-# Push
-git push origin main --force-with-lease
-git push origin arisetime --force-with-lease
+git push origin YOUR_BRANCH --force-with-lease
 ```
 
-**Safer because**: BFG specifically targets files and is less aggressive than filter-branch.
+Replace `YOUR_BRANCH` with your branch name (e.g. `main`, `arisetime`).
 
-## Step 3: Verify removal
+## Step 3: Verify
 
 ```powershell
-# Confirm backend/.env is no longer in the most recent commit
-git ls-tree -r HEAD | grep "backend/.env"
-# Should return: (no output)
+git ls-files backend/.env
+# (no output = good)
 
-# Check git log to ensure history is clean
 git log --all --full-history -- backend/.env
-# Should return: (no output)
+# (no output = purged from history)
 ```
 
-## Step 4: Rotate credentials IMMEDIATELY
+## Step 4: Rotate all credentials
 
-### MongoDB
-1. Go to [MongoDB Atlas](https://cloud.mongodb.com)
-2. Sign in with `grensuke_db_user` account
-3. Navigate to **Database Access** → **Username and Password**
-4. Click **Edit** on the `grensuke_db_user` entry
-5. Click **Generate New Password** → copy the new password
-6. Update your `.env` file with the new connection string
+Assume old values are public if they were in Git:
 
-### Gemini API Key
-1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Delete the compromised key `AIzaSyAj2ltZ0nwGa2xTLJbLT4Fv4Dy_YH5foo0`
-3. Click **Create API Key** → **Create new secret key**
-4. Copy the new key and update your `.env`
+| Secret | Action |
+|--------|--------|
+| **MongoDB** | Atlas → Database Access → reset user password → update `MONGO_URI` |
+| **JWT_SECRET** | Generate new random string → update `.env` → users must log in again |
+| **GEMINI_API_KEY** | Google AI Studio → revoke old key → create new key |
+| **OPENAI_API_KEY** | OpenAI dashboard → revoke and recreate if used |
 
-### OpenAI (if used)
-1. Go to [OpenAI API Keys](https://platform.openai.com/account/api-keys)
-2. Delete any compromised keys
-3. Generate new keys and update `.env`
-
-## Step 5: Update `.env` locally with new credentials
+Generate a JWT secret (example):
 
 ```powershell
-# Edit backend/.env
-notepad backend\.env
-
-# Replace with new credentials from step 4
-# File should look like:
-# PORT=4000
-# MONGO_URI=mongodb+srv://grensuke_db_user:NEW_PASSWORD@cluster0.w0zctzv.mongodb.net/
-# JWT_SECRET=your_secure_secret_here
-# GEMINI_API_KEY=your_new_gemini_key
-# GEMINI_ENDPOINT=
+# PowerShell — random base64 string
+[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
 ```
 
-## Step 6: Verify backend starts successfully
+## Step 5: Update local `.env`
+
+```powershell
+notepad backend\.env
+```
+
+Use placeholders from `backend/.env.example` as a guide. Never commit this file.
+
+## Step 6: Verify app still runs
 
 ```powershell
 cd backend
 npm install
 npm run dev
+# Expect server on port 4000
+
+cd ..\frontend
+npm install
+npm run dev
+# Expect Vite on http://localhost:5173
 ```
 
-Should see: `Server running on 4000` (or similar) without errors.
-
-## Step 7: Final verification
+## Step 7: Pre-push check
 
 ```powershell
-# Ensure .env is in .gitignore
 git status
-# Should show: nothing to commit (or untracked files, but NOT backend/.env)
+git ls-files | Select-String "\.env"
+# Must not list backend/.env or frontend/.env.local
 ```
 
 ---
 
-## Summary
+## FAQ
 
-| Step | Command | Purpose |
-|------|---------|---------|
-| 1 | `git rm --cached backend/.env` | Stop tracking the file |
-| 2a | `git filter-branch ...` | Purge from history (standard) |
-| 2b | `bfg --delete-files ...` | Purge from history (safer) |
-| 3 | `git ls-tree -r HEAD ...` | Verify removal |
-| 4 | Manual rotation in MongoDB/Gemini | Invalidate old credentials |
-| 5 | Edit `.env` locally | Add new credentials |
-| 6 | `npm run dev` | Test with new credentials |
-| 7 | `git status` | Final check |
+**Can I push without purging history?**  
+You can stop future leaks with Step 1, but old commits may still contain secrets. Rotate credentials and purge before making the repo public.
 
-## Questions?
+**Will force-push break teammates' clones?**  
+Yes. They should re-clone or reset to the new remote history after you notify them.
 
-- **Q**: What if I can't force-push to main?  
-  **A**: That's actually good (protects against accidental rewrites). Work with your team or contact repository admin.
-
-- **Q**: Will this break clones for other developers?  
-  **A**: Yes, if you force-push. They'll need to re-clone or do `git fetch -f` followed by `git reset --hard origin/main`.
-
-- **Q**: Is the Gemini key I saw actually real?  
-  **A**: The format looks real. Treat it as compromised and rotate immediately (the above API key is now known to be published in a public repo).
-
-Good luck! 🎉
+**Is `.env` ignored now?**  
+Root `.gitignore` includes `backend/.env` and `frontend/.env.local`. Confirm with `git check-ignore -v backend/.env`.

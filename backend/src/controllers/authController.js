@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Profile = require('../models/Profile');
 const { hash, compare } = require('../utils/hashPassword');
 const generateToken = require('../utils/generateToken');
 
@@ -11,6 +12,7 @@ exports.signup = async (req, res, next) => {
 		if (existing) return res.status(409).json({ msg: 'email already registered' });
 		const passwordHash = await hash(password);
 		const user = await User.create({ email: normalizedEmail, passwordHash, name });
+		await Profile.create({ user: user._id, strengths: [], triggers: [], bio: '' });
 		const token = generateToken({ id: user._id });
 		return res.json({ token, user: { id: user._id, email: user.email, name: user.name } });
 	} catch (e) {

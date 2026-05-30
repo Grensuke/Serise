@@ -1,65 +1,71 @@
 # Security Guidelines
 
-This document outlines critical security practices for the Serise project.
+Security practices for the Serise project.
 
-## Environment Secrets (Action Required)
+## Environment secrets
 
-The repository currently contains a `backend/.env` file with real credentials (Mongo URI, API keys). **This must be removed immediately.**
+### Do not commit secrets
 
-### Steps to remove secrets from Git history:
+- **Never commit** `backend/.env`, `frontend/.env.local`, or any file containing API keys, database URIs, or JWT secrets.
+- Use **`backend/.env.example`** and **`frontend/.env.local.example`** as templates only (placeholders, no real values).
+- Root **`.gitignore`** excludes env files. Backend and frontend also have local `.gitignore` rules.
 
-```bash
-# Remove the file from tracking
-git rm --cached backend/.env
+### Before pushing to GitHub
 
-# (Optional) If needed, purge from all history:
-git filter-branch --tree-filter 'rm -f backend/.env' -- --all
-git push origin main --force-with-lease  # Only if you have permission and it's safe to force-push
+```powershell
+# From repo root — should print nothing (file not tracked)
+git ls-files backend/.env frontend/.env.local
 
-# Or use BFG Repo-Cleaner for safer removal:
-# https://rtyley.github.io/bfg-repo-cleaner/
+# Should show ignore rules
+git check-ignore -v backend/.env
 ```
 
-### Next steps:
+If `backend/.env` appears in `git ls-files`, remove it from tracking **without deleting your local file**:
 
-1. **Rotate all credentials immediately** — assume the committed secrets are compromised.
-   - MongoDB: reset credentials in MongoDB Atlas
-   - API Keys: regenerate keys from Gemini/OpenAI dashboards
-2. **Update `.env` locally** with new credentials.
-3. **Add `.env` to `.gitignore`** — ensure `backend/.env` is never tracked.
-4. **Use environment secrets in production** — set secrets via your hosting platform (Vercel, Netlify, Heroku, Docker, etc.), not in `.env` files.
+```powershell
+git rm --cached backend/.env
+git commit -m "chore: stop tracking backend .env"
+```
 
-## Best Practices
+### If secrets were ever committed
 
-- **Never commit `.env` files** or any files containing secrets (API keys, database credentials, tokens).
-- **Use `.env.example`** as a template for developers (see `backend/.env.example`). It should contain placeholder values, not real secrets.
-- **Validate environment variables at startup** — the app now validates required env vars (`MONGO_URI`, `JWT_SECRET`) and exits with a clear message if missing.
-- **Use hashed passwords** — all password hashing is now async (bcrypt with salt=10).
-- **Ownership checks** — update/delete operations now verify the requesting user owns the resource before modifying or deleting (fixed in Goal and Script controllers).
-- **Error handling** — all controllers now forward errors to middleware using `next(err)` for centralized error handling.
-- **Normalize email addresses** — emails are lowercased and trimmed on signup/login to prevent case-sensitivity issues.
+Treat them as **compromised**:
 
-## API Security
+1. **Rotate** MongoDB password, JWT secret, and any API keys (Gemini, OpenAI).
+2. Update **`backend/.env`** locally with new values only.
+3. **Purge from Git history** — see [GIT_CLEANUP_STEPS.md](./GIT_CLEANUP_STEPS.md) (use BFG or `git filter-branch`).
+4. **Force-push** only if you understand the impact on collaborators.
 
-- **Token expiry**: JWT tokens expire after 7 days. Consider implementing refresh tokens for longer sessions.
-- **CORS**: Backend applies CORS middleware. Ensure frontend origin is configured properly in production.
-- **Rate limiting**: Consider adding rate limiting middleware to prevent brute-force attacks on `/api/auth/login`.
-- **Input validation**: Backends should validate all request inputs (currently minimal validation; consider adding express-validator).
+Do **not** paste real credentials into issues, PRs, or documentation.
 
-## Logging and Monitoring
+## Application security (implemented)
 
-- Avoid logging sensitive data (passwords, tokens, full error messages with secrets).
-- Use structured logging (pino/winston) in production instead of `console.log`.
-- Monitor error rates and unusual API usage patterns.
+| Area | Status |
+|------|--------|
+| Password storage | bcrypt hashing (async) |
+| Auth | JWT in `Authorization: Bearer` header |
+| Email | Normalized (lowercase, trim) on signup/login |
+| Ownership | User-scoped queries on conversations, goals, scripts, etc. |
+| Energy validation | Level must be 0–100 |
+| Frontend token | Stored as `serise_token`; cleared on logout |
+| API errors | `apiJson()` handles non-OK responses; 401 clears session |
 
-## Testing
+## Recommended improvements
 
-- Add unit tests for authentication, ownership checks, and password hashing.
-- Add integration tests for critical endpoints.
-- Use pre-commit hooks to lint and run security checks (e.g., `npm audit`, `snyk`).
+- **Rate limiting** on `/api/auth/login` and signup
+- **Refresh tokens** or shorter JWT expiry with renewal
+- **Input validation** (e.g. express-validator on backend)
+- **CORS allowlist** in production (restrict to your frontend origin)
+- **Structured logging** without sensitive fields in production
+- **Dependency audits**: `npm audit` in `backend/` and `frontend/`
+
+## Production deployment
+
+- Set env vars in the host dashboard (Render, Railway, Vercel, etc.) — not in committed files.
+- Use separate MongoDB users and databases for prod vs dev.
+- Rotate `JWT_SECRET` if it was ever exposed.
 
 ## Resources
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
-- [bcrypt.js Documentation](https://github.com/kelektiv/node.bcrypt.js)

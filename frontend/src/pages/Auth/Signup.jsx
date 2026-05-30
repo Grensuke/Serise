@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './Signup.module.css'
 import { apiFetch } from '../../utils/api'
+import { login } from '../../utils/auth'
 
 const Signup = () => {
   const usernameRef = useRef(null)
@@ -41,7 +42,7 @@ const Signup = () => {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.msg || 'Signup failed')
-      localStorage.setItem('serise_token', data.token)
+      login(data.token)
       setLoading(false)
       navigate('/dashboard')
     } catch (err) {

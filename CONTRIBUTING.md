@@ -38,8 +38,35 @@ Thank you for your interest in contributing to Serise! This document outlines de
 
 ### Verify everything works
 - Open http://localhost:5173 in your browser
-- Try signing up or logging in
-- Ensure you see no console errors
+- Sign up or log in → you should reach `/dashboard`
+- Test logout from the navbar or Profile page
+- Add a conversation in Memory Vault and confirm it persists after refresh
+- Ensure no console errors related to API or CORS
+
+## Frontend conventions
+
+### API calls
+Use `apiJson` and `authHeaders` from `frontend/src/utils/api.js`:
+
+```javascript
+import { apiJson, authHeaders } from '../utils/api'
+
+const data = await apiJson('/api/profile', { headers: authHeaders() })
+```
+
+Do not call `localStorage.getItem('serise_token')` directly in pages — use `authHeaders()`.
+
+### Auth
+Use `login()` / `logout()` from `frontend/src/utils/auth.js` so the NavBar stays in sync.
+
+### New tool pages
+- Wrap content in `AppLayout`
+- Add `PageHeader` with back link to `/dashboard`
+- Use global classes from `index.css`: `.page-shell`, `.ui-card`, `.btn`, `.form-input`
+
+### Styling
+- Page-specific styles: `PageName.module.css`
+- Shared tokens: CSS variables in `index.css` (`--accent`, `--surface`, etc.)
 
 ## Development Guidelines
 
@@ -110,8 +137,10 @@ npm install --save-dev jest supertest
 ## Pull Requests
 
 1. **Before submitting:**
-   - Run `npm run lint` (frontend) and fix any style issues.
-   - Test your changes locally (backend + frontend).
+   - Run `npm run lint` in `frontend/` and fix style issues.
+   - Run `npm run build` in `frontend/` to catch build errors.
+   - Test signup, dashboard, memory vault, profile save, and logout locally.
+   - Confirm `git ls-files backend/.env` is empty — never commit secrets.
    - Update README or docs if you add new features.
 
 2. **Submit a PR:**

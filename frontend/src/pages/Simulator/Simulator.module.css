@@ -1,41 +1,259 @@
-.page{ max-width:1100px; margin:32px auto; padding:0 24px; color: #000 }
-.landing{ text-align:center; padding:28px }
-.landing h1{ font-size:28px; margin:6px 0 }
-.subtitle{ color:#555; margin-bottom:18px }
-.scenarioGrid{ display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-top:18px }
-.scenarioCard{ background:#fff; border-radius:12px; padding:16px; box-shadow:0 8px 24px rgba(16,24,40,0.06); display:flex; flex-direction:column; align-items:center }
-.scenarioCard .icon{ font-size:28px }
-.scTitle{ font-weight:600; margin-top:8px }
-.scDesc{ color:#666; font-size:13px; margin-top:6px }
-.scActions{ margin-top:12px }
-
-.chatWrap{ display:flex; gap:20px }
-.chatMain{ flex:1; display:flex; flex-direction:column }
-.chatHeader{ display:flex; justify-content:space-between; align-items:center; padding-bottom:8px }
-.chatControls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
-.chatControls .btn{ height:36px }
-.controlInline select{ height:36px; border-radius:6px }
-.controlInline{ display:inline-flex; align-items:center }
-.controlNotes{ margin-top:8px; font-size:13px; color:#444 }
-.controlNotes div{ margin-top:4px }
-.chatWindow{ background:#f7f7fb; border-radius:12px; padding:16px; min-height:360px; max-height:56vh; overflow:auto }
-.bubbleAi{ align-self:flex-start; background:#fff; padding:10px 12px; border-radius:12px; margin-bottom:10px; box-shadow:0 6px 18px rgba(0,0,0,0.04); max-width:78% }
-.bubbleUser{ align-self:flex-end; background:linear-gradient(90deg,#6a29ff,#ff7ab6); color:#fff; padding:10px 12px; border-radius:12px; margin-bottom:10px; max-width:78% }
-.bubbleText{ white-space:pre-wrap }
-.bubbleTs{ font-size:11px; color:#666; margin-top:6px }
-.typing{ font-style:italic; color:#666 }
-.chatInputRow{ display:flex; gap:8px; margin-top:12px }
-.chatInputRow input{ flex:1; padding:10px; border-radius:8px; border:1px solid #e6e6e6 }
-
-.coachPanel{ width:320px; background:#fff; border-radius:12px; padding:12px; box-shadow:0 8px 30px rgba(16,24,40,0.06) }
-.coachPanel h3{ margin-top:0 }
-.coachSection{ margin-bottom:12px }
-.muted{ color:#666; font-size:13px }
-
-@media (max-width: 980px){
-	.scenarioGrid{ grid-template-columns: repeat(2, 1fr) }
-	.chatWrap{ flex-direction:column }
-	.coachPanel{ width:100% }
+.page {
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
-.result{ background:#fff; padding:12px; border-radius:8px; margin-top:12px; box-shadow:0 6px 14px rgba(0,0,0,0.04) }
+.scenarioGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.scenarioCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 20px;
+  transition: transform 180ms, box-shadow 180ms;
+}
+
+.scenarioCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.scenarioCard .icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.scTitle {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.scDesc {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.scActions {
+  width: 100%;
+}
+
+.scActions :global(.btn) {
+  width: 100%;
+}
+
+.chatBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0 0 16px;
+  cursor: pointer;
+  transition: color 150ms;
+}
+
+.chatBack:hover {
+  color: var(--accent);
+}
+
+.chatWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.chatMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatHeader {
+  margin-bottom: 16px;
+  padding: 20px;
+}
+
+.chatMeta {
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.chatControls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.controlInline select {
+  height: 38px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.controlInline {
+  display: inline-flex;
+  align-items: center;
+}
+
+.controlNotes {
+  margin-top: 12px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.controlNotes div {
+  margin-top: 4px;
+}
+
+.chatWindow {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  min-height: 360px;
+  max-height: 56vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bubbleAi {
+  align-self: flex-start;
+  background: var(--surface);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+  max-width: 78%;
+  border: 1px solid var(--border);
+}
+
+.bubbleUser {
+  align-self: flex-end;
+  background: var(--accent-gradient);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  max-width: 78%;
+}
+
+.bubbleText {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.bubbleTs {
+  font-size: 0.6875rem;
+  opacity: 0.7;
+  margin-top: 6px;
+}
+
+.bubbleUser .bubbleTs {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.typing {
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.chatInputRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.chatInputRow :global(.form-input) {
+  flex: 1;
+}
+
+.coachPanel {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.coachPanel h3 {
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+.coachSection {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.coachSection:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.coachSection strong {
+  display: block;
+  font-size: 0.8125rem;
+  margin-bottom: 6px;
+}
+
+.coachSection ul {
+  margin: 8px 0 0;
+  padding-left: 1.2rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 980px) {
+  .chatWrap {
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .chatMain {
+    flex: 1;
+  }
+
+  .coachPanel {
+    width: 300px;
+    flex-shrink: 0;
+    margin-top: 36px;
+  }
+}
+
+@media (max-width: 980px) {
+  .scenarioGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .scenarioGrid {
+    grid-template-columns: 1fr;
+  }
+}

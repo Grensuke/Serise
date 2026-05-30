@@ -2,11 +2,11 @@
 .env
 .env.local
 .env.*.local
+backend/.env
+frontend/.env.local
 
 # Dependencies
 node_modules/
-package-lock.json
-yarn.lock
 
 # Build outputs
 dist/
@@ -35,3 +35,6 @@ yarn-error.log*
 
 # OS
 Thumbs.db
+
+# Cursor / local tooling
+.cursor/

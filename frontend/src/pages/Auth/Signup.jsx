@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './Signup.module.css'
-import { apiFetch } from '../../utils/api'
+import { apiJson } from '../../utils/api'
 import { login } from '../../utils/auth'
 
 const Signup = () => {
@@ -35,13 +35,11 @@ const Signup = () => {
     if (!validate()) return
     setLoading(true)
     try {
-      const res = await apiFetch('/api/auth/signup', {
+      const data = await apiJson('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name: username })
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.msg || 'Signup failed')
       login(data.token)
       setLoading(false)
       navigate('/dashboard')

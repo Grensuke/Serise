@@ -8,7 +8,7 @@
 
 .intro {
   width: 100%;
-  background: #f4f4f4;
+  background: var(--surface-muted);
   padding: 36px 0 32px;
 }
 
@@ -23,7 +23,7 @@
   font-size: 48px;
   font-weight: 700;
   margin: 18px 0 24px;
-  color: #000;
+  color: var(--text);
   text-align: left;
 }
 
@@ -49,7 +49,7 @@
 }
 
 .cardLarge {
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   box-shadow: var(--card-shadow);
   padding: 22px 24px;
@@ -58,7 +58,7 @@
 }
 
 .cardLarge .lead {
-  color: #000; /* Ensure unhighlighted text in the left statement card is black */
+  color: var(--text); /* Ensure unhighlighted text in the left statement card is black */
 }
 
 .lead {
@@ -79,7 +79,7 @@
 }
 
 .tile {
-  background: #fff;
+  background: var(--surface);
   border-radius: 10px;
   box-shadow: var(--card-shadow);
   padding: 16px;
@@ -108,7 +108,7 @@
 .tileSubtitle {
   margin: 0;
   font-size: 13px;
-  color: #333;
+  color: var(--text-muted);
 }
 
 /* middle column placeholder removed (styles are in .cardTall) */
@@ -119,7 +119,7 @@
 }
 
 .cardTall {
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   box-shadow: var(--card-shadow);
   padding: 0; /* spacing inside handled by children */
@@ -138,7 +138,7 @@
 
 .cardText p {
   margin: 0;
-  color: #000; /* unhighlighted text should be black */
+  color: var(--text); /* unhighlighted text should be black */
   font-size: 16px;
   line-height: 1.6;
 }
@@ -148,7 +148,7 @@
   width: 360px;
   max-width: 100%;
   flex: 0 1 360px; /* allow shrinking */
-  background: #fff;
+  background: var(--surface);
   height: 320px; /* base height on desktop */
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
@@ -165,7 +165,7 @@
 
 .imageCard {
   /* kept for backward-compatibility if used elsewhere */
-  background: #fff;
+  background: var(--surface);
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
   overflow: hidden;
@@ -183,7 +183,7 @@
   text-align: center;
   margin-top: 28px;
   font-size: 25px;
-  color: #000000;
+  color: var(--text);
 }
 
 .quoteAccent {

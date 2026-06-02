@@ -26,7 +26,7 @@
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-size: 48px;
   font-weight: 700;
-  color: #000000;
+  color: var(--text);
 }
 .headingSecondary {
   display: block;
@@ -38,11 +38,11 @@
 
 .sub {
   margin: 6px 0 18px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .featureCard {
-  background: #fff;
+  background: var(--surface);
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
   padding: 20px;
@@ -82,7 +82,7 @@
 
 .label {
   font-size: 14px;
-  color: #222;
+  color: var(--text);
 }
 
 .callout {
@@ -91,10 +91,10 @@
   justify-content: center;
 }
 .calloutInner {
-  background: #f4f4f4;
+  background: var(--surface-muted);
   border-radius: 10px;
   padding: 18px 28px;
-  color: #222;
+  color: var(--text);
   font-size: 25px;
 }
 

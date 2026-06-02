@@ -144,10 +144,10 @@
   text-transform: capitalize;
 }
 
-.calm { background: #e6ffef; color: #1f7a3a; }
-.nervous { background: #fff4e6; color: #a96a00; }
-.anxious { background: #ffecec; color: #9a2b2b; }
-.confident { background: #e8f0ff; color: #243b7a; }
+.calm { background: var(--success-bg); color: var(--success); }
+.nervous { background: var(--warning-bg); color: var(--warning); }
+.anxious { background: var(--danger-bg); color: var(--danger); }
+.confident { background: var(--info-bg); color: var(--info); }
 
 .detailCol {
   position: sticky;
@@ -344,8 +344,8 @@
 }
 
 .bannerSuccess {
-  color: #1f7a3a;
-  background: #e6ffef;
+  color: var(--success);
+  background: var(--success-bg);
   padding: 12px 16px;
   border-radius: var(--radius-sm);
   margin-bottom: 16px;

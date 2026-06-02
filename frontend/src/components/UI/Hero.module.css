@@ -6,7 +6,7 @@
 .hero {
 	width: 100%;
 	background: transparent;
-	color: #000;
+	color: var(--text);
 	display: block;
 }
 
@@ -27,24 +27,24 @@
 	font-weight: 700;
 	line-height: 1.05;
 	font-size: 48px;
-	color: #000;
+	color: var(--text);
 }
 
 .line {
 	display: block;
-	color: #000;
+	color: var(--text);
 }
 
 .linePrimary {
 	display: block;
-	color: #4B0082; /* Indigo */
+	color: var(--accent);
 }
 
 .chevron {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	color: #4B0082;
+	color: var(--accent);
 	text-decoration: none;
 	width: 56px;
 	height: 56px;
@@ -52,7 +52,7 @@
 	transition: background-color 150ms, transform 120ms;
 }
 .chevron:hover {
-	background-color: rgba(75, 0, 130, 0.06);
+	background-color: var(--accent-soft);
 	transform: translateX(2px);
 }
 .chevron:active {

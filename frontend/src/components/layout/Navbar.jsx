@@ -6,6 +6,7 @@ import styles from './navBar.module.css'
 const NavBar = () => {
   const [open, setOpen] = useState(false)
   const [authed, setAuthed] = useState(() => isAuthenticated())
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'))
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -23,12 +24,32 @@ const NavBar = () => {
       if (e.key === 'Escape' && open) setOpen(false)
     }
     document.addEventListener('keydown', onKey)
+    
+    // Check initial theme class on mount to sync state if it changed before render
+    setIsDark(document.documentElement.classList.contains('dark'))
+    
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
 
+  const toggleTheme = () => {
+    const nextDark = !isDark
+    setIsDark(nextDark)
+    if (nextDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
   const toggle = () => setOpen((s) => !s)
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     authLogout()
     setOpen(false)
     setAuthed(false)
@@ -62,11 +83,14 @@ const NavBar = () => {
         </div>
 
         <div className={styles.actions}>
-          {authed && (
-            <button type="button" className={styles.logoutDesktop} onClick={handleLogout}>
-              Logout
-            </button>
-          )}
+          <button
+            type="button"
+            className={styles.themeToggle}
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+          >
+            {isDark ? '☀️' : '🌙'}
+          </button>
           <button
             className={`${styles.hamburger} ${open ? styles.open : ''}`}
             aria-label={open ? 'Close menu' : 'Open menu'}

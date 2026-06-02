@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { isAuthenticated } from '../utils/auth';
 import Home from '../pages/Home/Home';
 import Login from '../pages/Auth/Login';
 import Signup from '../pages/Auth/Signup';
@@ -16,7 +17,22 @@ import NavBar from '../components/layout/Navbar';
 
 function RouterWithNav() {
   const location = useLocation();
+  const navigate = useNavigate();
   const hideNav = location.pathname.startsWith('/auth');
+
+  React.useEffect(() => {
+    const sync = () => {
+      if (!isAuthenticated()) {
+        navigate('/auth/login', { replace: true });
+      }
+    };
+    window.addEventListener('auth-changed', sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener('auth-changed', sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, [navigate]);
 
   return (
     <>

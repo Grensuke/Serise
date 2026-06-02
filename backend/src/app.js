@@ -10,20 +10,8 @@ const profileRoutes = require('./routes/profileRoutes');
 const scriptRoutes = require('./routes/scriptRoutes');
 const goalRoutes = require('./routes/goalRoutes');
 
-const allowedOrigins = [
-  'http://localhost:5173', // Default local Vite dev server
-  process.env.FRONTEND_URL, // Configured production domain
-].filter(Boolean);
-
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow non-browser requests (like curl, same-origin, or postman)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
-      return callback(null, true);
-    }
-    return callback(new Error('Blocked by CORS'));
-  },
+  origin: true,
   credentials: true
 }));
 app.use(express.json());

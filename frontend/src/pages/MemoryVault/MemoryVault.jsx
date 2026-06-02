@@ -12,14 +12,6 @@ function QuickAddModal({ open, onClose, onAdd, saving, error }) {
   const [participants, setParticipants] = useState('')
   const [mood, setMood] = useState('calm')
 
-  useEffect(() => {
-    if (open) {
-      setSummary('')
-      setParticipants('')
-      setMood('calm')
-    }
-  }, [open])
-
   if (!open) return null
 
   const submit = (e) => {
@@ -537,6 +529,7 @@ export default function MemoryVault() {
         </main>
 
         <QuickAddModal
+          key={quickOpen ? 'open' : 'closed'}
           open={quickOpen}
           onClose={() => { setQuickOpen(false); setAddError('') }}
           onAdd={handleAdd}

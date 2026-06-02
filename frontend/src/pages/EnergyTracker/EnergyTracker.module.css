@@ -48,10 +48,69 @@
   accent-color: var(--accent);
 }
 
+.activityWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.activityChip {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activityChip:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+}
+
+.activityChipActive {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.historyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
 .historyTitle {
   font-size: 1rem;
   font-weight: 700;
+  margin: 0;
+}
+
+.aiInsightsPanel {
+  background: var(--surface-muted);
+  border-left: 4px solid var(--accent);
+  padding: 16px;
+  border-radius: var(--radius-sm);
   margin-bottom: 16px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-subtle);
+}
+
+.aiInsightsPanel h3 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.logActivities {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-top: 4px;
 }
 
 .list {
@@ -109,3 +168,4 @@
     grid-template-columns: 1fr;
   }
 }
+

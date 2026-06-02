@@ -24,10 +24,6 @@ const NavBar = () => {
       if (e.key === 'Escape' && open) setOpen(false)
     }
     document.addEventListener('keydown', onKey)
-    
-    // Check initial theme class on mount to sync state if it changed before render
-    setIsDark(document.documentElement.classList.contains('dark'))
-    
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
 

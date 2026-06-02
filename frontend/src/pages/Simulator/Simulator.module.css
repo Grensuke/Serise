@@ -1,13 +1,11 @@
-.page {
-  max-width: none;
-  margin: 0;
-  padding: 0;
-}
+/* .page has been removed so page-shell handles max-width */
 
 .scenarioGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  max-width: 1000px; /* Constrain grid width so it's not too stretched */
+  margin: 0 auto;
 }
 
 .scenarioCard {
@@ -15,32 +13,37 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 24px 20px;
+  padding: 32px 24px; /* More breathable padding */
   transition: transform 180ms, box-shadow 180ms;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: none; /* Flatter look */
 }
 
 .scenarioCard:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: var(--accent-soft);
 }
 
 .scenarioCard .icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
+  font-size: 2.25rem;
+  margin-bottom: 12px;
 }
 
 .scTitle {
   font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 6px;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
 }
 
 .scDesc {
   color: var(--text-muted);
   font-size: 0.875rem;
-  line-height: 1.4;
+  line-height: 1.5;
   flex: 1;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .scActions {
@@ -49,6 +52,15 @@
 
 .scActions :global(.btn) {
   width: 100%;
+  border-radius: 20px; /* Pill shape for elegance */
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: none;
+}
+
+.scActions :global(.btn):hover {
+  background: var(--accent);
+  color: #fff;
 }
 
 .chatBack {
@@ -60,7 +72,7 @@
   color: var(--text-muted);
   font-weight: 600;
   font-size: 0.875rem;
-  padding: 0 0 16px;
+  padding: 0 0 20px;
   cursor: pointer;
   transition: color 150ms;
 }
@@ -72,38 +84,52 @@
 .chatWrap {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .chatMain {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
 }
 
 .chatHeader {
-  margin-bottom: 16px;
-  padding: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chatHeader h2 {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
 }
 
 .chatMeta {
   color: var(--text-muted);
-  margin-top: 4px;
 }
 
 .chatControls {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
   flex-wrap: wrap;
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
 .controlInline select {
   height: 38px;
-  padding: 0 10px;
+  padding: 0 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.875rem;
 }
 
 .controlInline {
@@ -111,144 +137,171 @@
   align-items: center;
 }
 
-.controlNotes {
-  margin-top: 12px;
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-
-.controlNotes div {
-  margin-top: 4px;
-}
-
 .chatWindow {
   background: var(--surface-muted);
-  border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 20px;
-  min-height: 360px;
-  max-height: 56vh;
-  overflow: auto;
+  padding: 24px;
+  min-height: 400px;
+  max-height: 60vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .bubbleAi {
   align-self: flex-start;
   background: var(--surface);
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  border-radius: 18px 18px 18px 4px;
   margin-bottom: 8px;
-  box-shadow: var(--shadow-sm);
-  max-width: 78%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  max-width: 80%;
   border: 1px solid var(--border);
 }
 
 .bubbleUser {
   align-self: flex-end;
-  background: var(--accent-gradient);
+  background: var(--accent);
   color: #fff;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  border-radius: 18px 18px 4px 18px;
   margin-bottom: 8px;
-  max-width: 78%;
+  max-width: 80%;
+  box-shadow: 0 2px 8px rgba(75, 0, 130, 0.2);
 }
 
 .bubbleText {
   white-space: pre-wrap;
   line-height: 1.5;
+  font-size: 0.95rem;
 }
 
 .bubbleTs {
-  font-size: 0.6875rem;
-  opacity: 0.7;
+  font-size: 0.7rem;
+  opacity: 0.6;
   margin-top: 6px;
+  text-align: right;
 }
 
 .bubbleUser .bubbleTs {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .typing {
   font-style: italic;
-  color: var(--text-muted);
+  color: var(--text-subtle);
   font-size: 0.875rem;
+  padding: 8px 12px;
 }
 
 .chatInputRow {
   display: flex;
-  gap: 10px;
-  margin-top: 16px;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .chatInputRow :global(.form-input) {
   flex: 1;
+  border-radius: 24px;
+  padding: 14px 20px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
 }
 
+.chatInputRow :global(.form-input):focus {
+  background: var(--surface);
+}
+
+.chatInputRow :global(.btn) {
+  border-radius: 24px;
+  padding: 0 24px;
+}
+
+/* Coach Sidebar */
 .coachPanel {
-  margin-top: 20px;
-  padding: 20px;
+  padding: 24px;
+  border-left: 1px solid var(--border);
+  background: transparent;
 }
 
 .coachPanel h3 {
-  font-size: 1rem;
-  margin-bottom: 16px;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .coachSection {
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.coachSection:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  margin-bottom: 24px;
 }
 
 .coachSection strong {
   display: block;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   margin-bottom: 6px;
+  color: var(--text);
 }
 
 .coachSection ul {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   padding-left: 1.2rem;
   color: var(--text-muted);
   font-size: 0.875rem;
+  line-height: 1.6;
 }
 
 .muted {
   color: var(--text-muted);
   font-size: 0.8125rem;
+  margin-bottom: 10px;
+}
+
+.coachResult {
+  margin-top: 12px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: var(--text);
+  line-height: 1.5;
 }
 
 @media (min-width: 980px) {
   .chatWrap {
     flex-direction: row;
-    gap: 20px;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
   .chatMain {
     flex: 1;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
 
   .coachPanel {
-    width: 300px;
+    width: 320px;
     flex-shrink: 0;
-    margin-top: 36px;
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-top-right-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+    background: var(--surface);
   }
 }
 
 @media (max-width: 980px) {
   .scenarioGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .coachPanel {
+    border-left: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
   }
 }
 

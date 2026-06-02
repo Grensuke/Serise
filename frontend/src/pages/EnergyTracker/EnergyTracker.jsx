@@ -9,8 +9,20 @@ export default function EnergyTracker() {
   const [logs, setLogs] = useState([])
   const [level, setLevel] = useState(50)
   const [note, setNote] = useState('')
+  const [activities, setActivities] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [aiAnalysis, setAiAnalysis] = useState('')
+  const [aiLoading, setAiLoading] = useState(false)
+
+  const ACTIVITY_OPTIONS = [
+    'Meeting', 'Party', 'Deep Work', 'Reading', 
+    'Socializing', 'Family Time', 'Running Errands', 'Relaxing'
+  ]
+
+  const toggleActivity = (act) => {
+    setActivities(prev => prev.includes(act) ? prev.filter(a => a !== act) : [...prev, act])
+  }
 
   useEffect(() => {
     apiFetch('/api/energy', { headers: authHeaders() })
@@ -25,11 +37,12 @@ export default function EnergyTracker() {
       const res = await apiFetch('/api/energy', {
         method: 'POST',
         headers: authHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ level, note }),
+        body: JSON.stringify({ level, note, activities }),
       })
       const data = await res.json()
       setLogs((prev) => [data, ...prev])
       setNote('')
+      setActivities([])
     } finally {
       setSaving(false)
     }
@@ -39,6 +52,20 @@ export default function EnergyTracker() {
     if (v >= 75) return 'High'
     if (v >= 40) return 'Moderate'
     return 'Low'
+  }
+
+  const handleAnalyze = async () => {
+    setAiLoading(true)
+    try {
+      const res = await apiFetch('/api/energy/analyze', { headers: authHeaders() })
+      const data = await res.json()
+      setAiAnalysis(data.analysis || 'Analysis failed.')
+    } catch (err) {
+      console.error(err)
+      setAiAnalysis('Could not analyze logs at this time.')
+    } finally {
+      setAiLoading(false)
+    }
   }
 
   return (
@@ -74,6 +101,22 @@ export default function EnergyTracker() {
             />
 
             <div className="form-field">
+              <label className="form-label">Activities (optional)</label>
+              <div className={styles.activityWrap}>
+                {ACTIVITY_OPTIONS.map(act => (
+                  <button 
+                    key={act}
+                    type="button" 
+                    className={`${styles.activityChip} ${activities.includes(act) ? styles.activityChipActive : ''}`}
+                    onClick={() => toggleActivity(act)}
+                  >
+                    {act}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-field">
               <label htmlFor="energy-note" className="form-label">Note (optional)</label>
               <input
                 id="energy-note"
@@ -90,7 +133,19 @@ export default function EnergyTracker() {
           </section>
 
           <section className={`ui-card ${styles.historyCard}`}>
-            <h2 className={styles.historyTitle}>Recent logs</h2>
+            <div className={styles.historyHeader}>
+              <h2 className={styles.historyTitle}>Recent logs</h2>
+              <button className="btn" onClick={handleAnalyze} disabled={aiLoading || logs.length < 3}>
+                {aiLoading ? 'Analyzing...' : 'Analyze Trends'}
+              </button>
+            </div>
+            
+            {aiAnalysis && (
+              <div className={styles.aiInsightsPanel}>
+                <h3>✨ AI Insights</h3>
+                <p style={{ whiteSpace: 'pre-line' }}>{aiAnalysis}</p>
+              </div>
+            )}
             {loading ? (
               <p className="loading-state">Loading…</p>
             ) : logs.length === 0 ? (
@@ -105,6 +160,11 @@ export default function EnergyTracker() {
                       <time className={styles.logDate}>
                         {l.createdAt ? new Date(l.createdAt).toLocaleString() : ''}
                       </time>
+                      {(l.activities && l.activities.length > 0) && (
+                        <div className={styles.logActivities}>
+                          {l.activities.join(', ')}
+                        </div>
+                      )}
                       {l.note && <p className={styles.logNote}>{l.note}</p>}
                     </div>
                   </li>

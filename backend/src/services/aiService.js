@@ -1,21 +1,35 @@
-const axios = require('axios');
-const { geminiKey, openaiKey } = require('../config/env');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { geminiKey } = require('../config/env');
+
+let genAI = null;
+let model = null;
+
+if (geminiKey) {
+  genAI = new GoogleGenerativeAI(geminiKey);
+  model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+}
 
 // Basic AI service that uses Gemini (if key provided) or falls back to a simple stub.
 exports.analyze = async (text, opts = {}) => {
-  if (geminiKey) {
-    // Example Gemini integration placeholder. Replace with real REST call if desired.
+  if (model) {
     try {
-      const url = process.env.GEMINI_ENDPOINT || 'https://api.example.com/gemini/analyze';
-      const resp = await axios.post(url, { input: text, opts }, { headers: { Authorization: `Bearer ${geminiKey}` } });
-      return resp.data;
+      const prompt = `Analyze the following conversation context. Focus on the tone and providing encouraging advice.
+      Conversation: ${text}
+      Options: ${JSON.stringify(opts)}
+      Return a JSON response (without markdown block formatting, just raw JSON string) containing keys: text (string summary), sentiment (positive/cautious/neutral), tone (string), confidence (number 0-100), keyPoints (array of strings), suggestions (array of strings), reassurance (string).`;
+      
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let textRes = response.text();
+      
+      if (textRes.startsWith('```json')) {
+        textRes = textRes.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      return JSON.parse(textRes);
     } catch (e) {
       console.error('gemini analyze error', e.message);
     }
-  }
-
-  if (openaiKey) {
-    // Could implement OpenAI fallback here.
   }
 
   // Structured stub when no AI key is configured
@@ -42,11 +56,17 @@ exports.analyze = async (text, opts = {}) => {
 };
 
 exports.simulate = async (prompt, opts = {}) => {
-  if (geminiKey) {
+  if (model) {
     try {
-      const url = process.env.GEMINI_ENDPOINT || 'https://api.example.com/gemini/simulate';
-      const resp = await axios.post(url, { prompt, opts }, { headers: { Authorization: `Bearer ${geminiKey}` } });
-      return resp.data;
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let text = response.text();
+      
+      if (text.startsWith('```json')) {
+        text = text.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      }
+
+      return { reply: text };
     } catch (e) {
       console.error('gemini simulate error', e.message);
     }

@@ -22,9 +22,9 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --shadow-sm: 0 4px 12px rgba(16, 24, 40, 0.06);
-  --shadow-md: 0 8px 24px rgba(16, 24, 40, 0.08);
-  --shadow-lg: 0 16px 40px rgba(16, 24, 40, 0.1);
+  --shadow-sm: 0 4px 16px rgba(75, 0, 130, 0.08), 0 1px 3px rgba(75, 0, 130, 0.04);
+  --shadow-md: 0 8px 28px rgba(75, 0, 130, 0.12), 0 2px 8px rgba(75, 0, 130, 0.06);
+  --shadow-lg: 0 16px 48px rgba(75, 0, 130, 0.16), 0 4px 16px rgba(75, 0, 130, 0.08);
 
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
@@ -62,9 +62,9 @@ html.dark {
     --warning-bg: rgba(251, 191, 36, 0.15);
     --info: #60a5fa;
     --info-bg: rgba(96, 165, 250, 0.15);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 4px 20px rgba(123, 44, 191, 0.18), 0 1px 4px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 8px 32px rgba(123, 44, 191, 0.24), 0 2px 8px rgba(0, 0, 0, 0.40);
+    --shadow-lg: 0 16px 56px rgba(123, 44, 191, 0.30), 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 
 *, *::before, *::after {

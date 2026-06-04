@@ -383,7 +383,9 @@
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(10, 12, 20, 0.5);
+  background: rgba(10, 12, 20, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -394,9 +396,17 @@
 .modal {
   width: 100%;
   max-width: 480px;
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
+}
+
+:global(html.dark) .modal {
+  background: rgba(21, 18, 33, 0.90);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .modalHeader {

@@ -250,6 +250,27 @@
   color: var(--text);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms;
   box-shadow: var(--shadow-sm);
+  /* Cursor-glow setup */
+  --glow-x: -999px;
+  --glow-y: -999px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    180px circle at var(--glow-x) var(--glow-y),
+    rgba(107, 41, 255, 0.14),
+    transparent 65%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  transition: opacity 300ms ease;
+  z-index: 0;
 }
 
 .tile:hover {
@@ -262,18 +283,24 @@
 .tileIcon {
   font-size: 1.5rem;
   margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .tileLabel {
   font-weight: 700;
   font-size: 0.9375rem;
   margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
 }
 
 .tileDesc {
   font-size: 0.75rem;
   color: var(--text-muted);
   line-height: 1.3;
+  position: relative;
+  z-index: 1;
 }
 
 .recentCard {

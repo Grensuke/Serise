@@ -113,6 +113,17 @@ export default function Dashboard() {
     return 'Good evening'
   }
 
+  const handleTileMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    e.currentTarget.style.setProperty('--glow-x', `${e.clientX - rect.left}px`)
+    e.currentTarget.style.setProperty('--glow-y', `${e.clientY - rect.top}px`)
+  }
+
+  const handleTileMouseLeave = (e) => {
+    e.currentTarget.style.setProperty('--glow-x', '-999px')
+    e.currentTarget.style.setProperty('--glow-y', '-999px')
+  }
+
   const formatLastCheckIn = () => {
     if (!lastCheckIn) return 'No check-in yet today'
     return `Last saved ${new Date(lastCheckIn).toLocaleString(undefined, {
@@ -227,7 +238,13 @@ export default function Dashboard() {
             <h2 className={styles.sectionTitle}>Your tools</h2>
             <div className={styles.tilesGrid}>
               {TILES.map((t) => (
-                <Link key={t.to} to={t.to} className={styles.tile}>
+                <Link
+                  key={t.to}
+                  to={t.to}
+                  className={styles.tile}
+                  onMouseMove={handleTileMouseMove}
+                  onMouseLeave={handleTileMouseLeave}
+                >
                   <span className={styles.tileIcon} aria-hidden>{t.icon}</span>
                   <span className={styles.tileLabel}>{t.label}</span>
                   <span className={styles.tileDesc}>{t.desc}</span>

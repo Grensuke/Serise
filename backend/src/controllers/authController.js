@@ -57,3 +57,22 @@ exports.login = async (req, res, next) => {
 		return next(e);
 	}
 };
+
+exports.forgotPassword = async (req, res, next) => {
+	try {
+		const { email } = req.body;
+		if (!email) return res.status(400).json({ msg: 'email is required' });
+		
+		const normalizedEmail = email.toLowerCase().trim();
+		if (!EMAIL_REGEX.test(normalizedEmail)) {
+			return res.status(400).json({ msg: 'invalid email format' });
+		}
+
+		// In a real application, you'd generate a reset token and email it here.
+		// For prototype purposes, we simulate success securely without revealing if email exists.
+		return res.json({ msg: 'If this email is registered, a reset link will be sent.' });
+	} catch (e) {
+		console.error('forgot password error:', e.message);
+		return next(e);
+	}
+};

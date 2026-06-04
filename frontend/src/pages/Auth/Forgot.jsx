@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { EnvelopeSimple } from '@phosphor-icons/react'
+import { apiJson } from '../../utils/api'
 import styles from './Forgot.module.css'
 
 const Forgot = () => {
@@ -14,13 +15,21 @@ const Forgot = () => {
     return true
   }
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     setError('')
     if (!validate()) return
-    // In a real app, this would call an API endpoint to send a reset email.
-    // For now, we show a helpful confirmation state.
-    setSubmitted(true)
+    
+    try {
+      await apiJson('/api/auth/forgot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      setSubmitted(true)
+    } catch (err) {
+      setError(err.message || 'Failed to send reset link. Please try again.')
+    }
   }
 
   return (

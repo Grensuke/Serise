@@ -5,7 +5,7 @@ import {
 import AppLayout from '../../components/layout/AppLayout'
 import PageHeader from '../../components/layout/PageHeader'
 import styles from './Simulator.module.css'
-import { apiFetch, authHeaders } from '../../utils/api'
+import { apiJson, authHeaders } from '../../utils/api'
 
 const SCENARIOS = [
   { id: 'smalltalk', title: 'Small Talk Practice', icon: <Coffee weight="duotone" size={32} color="#f59e0b" />, desc: 'Practice casual conversation starters.' },
@@ -61,8 +61,7 @@ export default function Simulator(){
     setLoading(true)
     try{
       const prompt = `Start the scenario '${scenario.title}' as a ${role} using a ${tone} tone and ${difficulty} difficulty. Provide one opening reply.`
-      const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: scenario.id }) })
-      const data = await res.json()
+      const data = await apiJson('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: scenario.id }) })
       const reply = data.result?.reply || data.result || data.reply || `Hello — let's start.`
       setMessages([{ id:'sys', who:'ai', text: `Scenario: ${scenario.title}.` }, { id:Date.now(), who:'ai', text: reply }])
       setAiTyping(false)
@@ -98,8 +97,7 @@ ${transcript}
 AI:`
       
       const body = { prompt: fullPrompt, scenario: scenario ? scenario.id : 'general', tone, difficulty, role }
-      const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify(body) })
-      const data = await res.json()
+      const data = await apiJson('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify(body) })
       
       const reply = data.result?.reply || data.result || (data.reply) || `Simulated reply (stub) to: ${input}`
       const aiMsg = { id: Date.now()+1, who:'ai', text: reply, ts: new Date().toISOString() }
@@ -126,8 +124,7 @@ AI:`
     setCoachLoading(true)
     try {
       const prompt = `Return a JSON object analyzing this user message: "${lastUser.text}". Keys required: "analysis" (string, short feedback), "confidence" (number 0-100). Do not include any markdown blocks.`
-      const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'coach' }) })
-      const data = await res.json()
+      const data = await apiJson('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'coach' }) })
       const reply = data.result?.reply || data.result || data.reply || ''
       let obj = {}
       try { obj = typeof reply === 'string' ? JSON.parse(reply.replace(/^```json\s*/, '').replace(/\s*```$/, '')) : reply } 
@@ -149,8 +146,7 @@ AI:`
     setCoachLoading(true)
     try {
       const prompt = `Suggest 3 short, better alternative ways to say: "${lastUser.text}" in a ${tone} tone. Keep it encouraging.`
-      const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'coach' }) })
-      const data = await res.json()
+      const data = await apiJson('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'coach' }) })
       setCoachAlternatives(data.result?.reply || data.result || data.reply || 'No suggestions.')
     } catch(err) {
       console.error(err)
@@ -168,8 +164,7 @@ AI:`
     
     let analysisObj = null
     try {
-      const res = await apiFetch('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'analysis' }) })
-      const data = await res.json()
+      const data = await apiJson('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'analysis' }) })
       const reply = data.result?.reply || data.result || data.reply || ''
       try { analysisObj = typeof reply === 'string' ? JSON.parse(reply.replace(/^```json\s*/, '').replace(/\s*```$/, '')) : reply } catch (err) { console.error('Parse error', err) }
     } catch (err) {
@@ -180,9 +175,8 @@ AI:`
     if (analysisObj) body.analysis = analysisObj
 
     try {
-      const res = await apiFetch('/api/conversations', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify(body) })
-      if(res.ok) setSaveStatus(<span style={{display: 'inline-flex', alignItems: 'center', gap: '4px'}}><CheckCircle weight="bold" /> Saved!</span>)
-      else setSaveStatus(<span style={{display: 'inline-flex', alignItems: 'center', gap: '4px'}}><XCircle weight="bold" /> Failed</span>)
+      await apiJson('/api/conversations', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify(body) })
+      setSaveStatus(<span style={{display: 'inline-flex', alignItems: 'center', gap: '4px'}}><CheckCircle weight="bold" /> Saved!</span>)
     } catch(e) {
       console.error(e)
       setSaveStatus(<span style={{display: 'inline-flex', alignItems: 'center', gap: '4px'}}><XCircle weight="bold" /> Failed</span>)

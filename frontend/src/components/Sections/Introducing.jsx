@@ -12,20 +12,20 @@ const Introducing = () => {
 
         <div className={styles.grid}>
           <div className={styles.leftColumn}>
-            <article className={styles.cardLarge}>
+            <article className={styles.cardLarge} data-glow>
               <p className={styles.lead}>
                 Your quiet <strong className={styles.accent}>companion</strong> for navigating the noise of social life.
               </p>
             </article>
 
             <div className={styles.tiles}>
-              <article className={styles.tile}>
+              <article className={styles.tile} data-glow>
                 <div className={styles.tileIcon}>✎</div>
                 <h3 className={styles.tileTitle}>Reflect Clearly</h3>
                 <p className={styles.tileSubtitle}>Conversation logs with AI insights</p>
               </article>
 
-              <article className={styles.tile}>
+              <article className={styles.tile} data-glow>
                 <div className={styles.tileIcon}>☺</div>
                 <h3 className={styles.tileTitle}>Understand</h3>
                 <p className={styles.tileSubtitle}>Insights from your interactions</p>
@@ -34,7 +34,7 @@ const Introducing = () => {
           </div>
 
           <div className={styles.middleColumn}>
-            <article className={styles.cardTall}>
+            <article className={styles.cardTall} data-glow>
               <div className={styles.cardText}>
                 <p>
                   With gentle guidance, practical tools, and <strong className={styles.accent}>AI-powered support</strong>,

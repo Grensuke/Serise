@@ -31,7 +31,7 @@ const Features = () => {
 
         <p className={styles.sub}>All your tools to improvise and socialize.</p>
 
-        <div className={styles.featureCard}>
+        <div className={styles.featureCard} data-glow>
           <ul className={styles.list}>
             {FEATURES.map((f) => (
               <li key={f} className={styles.item}>

@@ -140,13 +140,67 @@ input, textarea, select {
   margin: 0;
 }
 
-/* Shared card */
+/* Shared card — cursor glow built-in */
 .ui-card {
   background: var(--surface);
   border-radius: var(--radius-md);
   padding: 24px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
+  /* Cursor-glow machinery */
+  --glow-x: -999px;
+  --glow-y: -999px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.ui-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    220px circle at var(--glow-x) var(--glow-y),
+    rgba(107, 41, 255, 0.09),
+    transparent 65%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* Ensure card content sits above the glow layer */
+.ui-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Standalone glow utility for non-.ui-card interactive surfaces */
+.glow-card {
+  --glow-x: -999px;
+  --glow-y: -999px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    200px circle at var(--glow-x) var(--glow-y),
+    rgba(107, 41, 255, 0.11),
+    transparent 65%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.glow-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Shared buttons */

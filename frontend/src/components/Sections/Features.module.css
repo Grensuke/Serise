@@ -3,7 +3,6 @@
   --section-padding: 28px;
   --accent: #4B0082;
   --card-radius: 12px;
-  --card-shadow: 0 8px 20px rgba(16,24,40,0.06);
 }
 
 .features {
@@ -42,10 +41,43 @@
 }
 
 .featureCard {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--card-radius);
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--shadow-md);
   padding: 20px;
+  /* Cursor glow */
+  --glow-x: -999px;
+  --glow-y: -999px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.featureCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    280px circle at var(--glow-x) var(--glow-y),
+    rgba(107, 41, 255, 0.08),
+    transparent 65%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.featureCard > * {
+  position: relative;
+  z-index: 1;
+}
+
+:global(html.dark) .featureCard {
+  background: rgba(21, 18, 33, 0.82);
+  border-color: rgba(255, 255, 255, 0.07);
 }
 
 .list {
@@ -91,11 +123,20 @@
   justify-content: center;
 }
 .calloutInner {
-  background: var(--surface-muted);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 10px;
   padding: 18px 28px;
   color: var(--text);
   font-size: 25px;
+  box-shadow: var(--shadow-sm);
+}
+
+:global(html.dark) .calloutInner {
+  background: rgba(21, 18, 33, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 @media (max-width: 980px) {

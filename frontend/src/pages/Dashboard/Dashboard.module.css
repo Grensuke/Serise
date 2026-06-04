@@ -281,10 +281,11 @@
 }
 
 .tileIcon {
-  font-size: 1.5rem;
   margin-bottom: 8px;
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
 }
 
 .tileLabel {

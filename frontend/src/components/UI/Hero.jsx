@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { CaretRight } from '@phosphor-icons/react'
 import styles from './Hero.module.css'
 
 const Hero = () => {
@@ -13,9 +14,7 @@ const Hero = () => {
 				</h1>
 
 				<Link className={styles.chevron} to="/auth/login" aria-label="Go to login page">
-					<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-						<path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-					</svg>
+					<CaretRight size={28} weight="bold" />
 				</Link>
 			</div>
 		</section>

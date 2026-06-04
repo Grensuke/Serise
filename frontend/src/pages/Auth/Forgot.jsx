@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { EnvelopeSimple } from '@phosphor-icons/react'
 import styles from './Forgot.module.css'
 
 const Forgot = () => {
@@ -40,7 +41,9 @@ const Forgot = () => {
             <div className={styles.loginCard}>
               {submitted ? (
                 <div className={styles.successState}>
-                  <div className={styles.successIcon} aria-hidden>✉️</div>
+                  <div className={styles.successIcon} aria-hidden>
+                    <EnvelopeSimple size={48} weight="duotone" />
+                  </div>
                   <h1 id="forgot-heading" className={styles.loginTitle}>Check your inbox</h1>
                   <p className={styles.successDesc}>
                     If <strong>{email}</strong> is registered with Serise, you'll receive a password reset link shortly.

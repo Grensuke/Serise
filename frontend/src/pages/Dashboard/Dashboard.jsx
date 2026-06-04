@@ -1,24 +1,28 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  Sun, CloudSun, CloudRain,
+  Archive, Lightning, Wind, Robot, Notebook, Target, UserCircle
+} from '@phosphor-icons/react'
 import AppLayout from '../../components/layout/AppLayout'
 import { apiJson, authHeaders } from '../../utils/api'
 import { conversationTitle, energyLevelLabel } from '../../utils/display'
 import styles from './Dashboard.module.css'
 
 const MOODS = [
-  { id: 'happy', icon: '☀️', label: 'Happy', level: 80 },
-  { id: 'moderate', icon: '⛅', label: 'Moderate', level: 55 },
-  { id: 'sad', icon: '🌙', label: 'Low', level: 30 },
+  { id: 'happy', icon: <Sun weight="duotone" size={28} color="#f59e0b" />, label: 'Happy', level: 80 },
+  { id: 'moderate', icon: <CloudSun weight="duotone" size={28} color="#38bdf8" />, label: 'Moderate', level: 55 },
+  { id: 'sad', icon: <CloudRain weight="duotone" size={28} color="var(--text-muted)" />, label: 'Low', level: 30 },
 ]
 
 const TILES = [
-  { label: 'Memory Vault', to: '/vault', icon: '💾', desc: 'Review past conversations' },
-  { label: 'Energy Tracker', to: '/energy', icon: '⚡', desc: 'Log social battery' },
-  { label: 'Anti-Overthinking', to: '/overthinking', icon: '🧠', desc: 'Reframe anxious thoughts' },
-  { label: 'Simulator', to: '/simulate', icon: '🎭', desc: 'Practice scenarios safely' },
-  { label: 'Scripts', to: '/scripts', icon: '✍️', desc: 'Build conversation scripts' },
-  { label: 'Goals', to: '/goals', icon: '★', desc: 'Track social milestones' },
-  { label: 'Profile', to: '/profile', icon: '👤', desc: 'Your account & stats' },
+  { label: 'Memory Vault', to: '/vault', icon: <Archive weight="duotone" size={28} color="var(--accent)" />, desc: 'Review past conversations' },
+  { label: 'Energy Tracker', to: '/energy', icon: <Lightning weight="duotone" size={28} color="#f59e0b" />, desc: 'Log social battery' },
+  { label: 'Anti-Overthinking', to: '/overthinking', icon: <Wind weight="duotone" size={28} color="#38bdf8" />, desc: 'Reframe anxious thoughts' },
+  { label: 'Simulator', to: '/simulate', icon: <Robot weight="duotone" size={28} color="#34d399" />, desc: 'Practice scenarios safely' },
+  { label: 'Scripts', to: '/scripts', icon: <Notebook weight="duotone" size={28} color="#fb7185" />, desc: 'Build conversation scripts' },
+  { label: 'Goals', to: '/goals', icon: <Target weight="duotone" size={28} color="#a78bfa" />, desc: 'Track social milestones' },
+  { label: 'Profile', to: '/profile', icon: <UserCircle weight="duotone" size={28} color="var(--text-muted)" />, desc: 'Your account & stats' },
 ]
 
 function parseMoodFromNote(note) {

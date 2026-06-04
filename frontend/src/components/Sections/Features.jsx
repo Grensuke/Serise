@@ -1,4 +1,5 @@
 import React from 'react'
+import { CheckSquare } from '@phosphor-icons/react'
 import styles from './Features.module.css'
 
 const FEATURES = [
@@ -14,10 +15,7 @@ const FEATURES = [
 ]
 
 const CheckIcon = () => (
-  <svg className={styles.check} width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-    <rect x="0.5" y="0.5" width="23" height="23" rx="4" stroke="currentColor" strokeWidth="1" fill="currentColor" />
-    <path d="M7 12.5L10 15.5L17 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
+  <CheckSquare weight="fill" className={styles.check} size={16} />
 )
 
 const Features = () => {

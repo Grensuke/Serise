@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { X, MagnifyingGlass, ChatCircle, ClipboardText } from '@phosphor-icons/react'
 import AppLayout from '../../components/layout/AppLayout'
 import PageHeader from '../../components/layout/PageHeader'
 import headerStyles from '../../components/layout/PageHeader.module.css'
@@ -25,7 +26,7 @@ function QuickAddModal({ open, onClose, onAdd, saving, error }) {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <header className={styles.modalHeader}>
           <h3>Quick add conversation</h3>
-          <button type="button" className={styles.modalClose} onClick={onClose} aria-label="Close">✕</button>
+          <button type="button" className={styles.modalClose} onClick={onClose} aria-label="Close"><X size={20} weight="bold" /></button>
         </header>
         <form onSubmit={submit}>
           <div className={styles.modalBody}>
@@ -303,7 +304,7 @@ export default function MemoryVault() {
 
         <div className={styles.toolbarBar}>
           <div className={styles.searchWrap}>
-            <span className={styles.searchIcon} aria-hidden>🔍</span>
+            <span className={styles.searchIcon} aria-hidden><MagnifyingGlass size={18} weight="bold" /></span>
             <input
               id="mv-search"
               className={styles.searchInput}
@@ -329,7 +330,7 @@ export default function MemoryVault() {
               <p className="loading-state">Loading conversations…</p>
             ) : items.length === 0 ? (
               <div className={`ui-card ${styles.emptyList}`}>
-                <span className={styles.emptyIcon} aria-hidden>💬</span>
+                <span className={styles.emptyIcon} aria-hidden><ChatCircle weight="duotone" size={48} color="var(--accent-light)" /></span>
                 <h2>No conversations yet</h2>
                 <p>Log a chat to build your memory vault and get AI insights over time.</p>
                 <button type="button" className="btn btn-primary" onClick={() => setQuickOpen(true)}>
@@ -515,7 +516,7 @@ export default function MemoryVault() {
               </div>
             ) : (
               <div className={`ui-card ${styles.emptyDetail}`}>
-                <span className={styles.emptyIcon} aria-hidden>📋</span>
+                <span className={styles.emptyIcon} aria-hidden><ClipboardText weight="duotone" size={56} color="var(--accent-light)" /></span>
                 <h2>Select a conversation</h2>
                 <p>Choose an entry from the list to view details and AI insights.</p>
                 {items.length === 0 && (

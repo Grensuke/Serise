@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Sun, Moon } from '@phosphor-icons/react'
 import { isAuthenticated, logout as authLogout } from '../../utils/auth'
 import styles from './navBar.module.css'
 
@@ -85,7 +86,7 @@ const NavBar = () => {
             onClick={toggleTheme}
             aria-label="Toggle Theme"
           >
-            {isDark ? '☀️' : '🌙'}
+            {isDark ? <Sun size={20} weight="bold" /> : <Moon size={20} weight="bold" />}
           </button>
           <button
             className={`${styles.hamburger} ${open ? styles.open : ''}`}

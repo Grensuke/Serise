@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Sparkle } from '@phosphor-icons/react'
 import AppLayout from '../../components/layout/AppLayout'
 import PageHeader from '../../components/layout/PageHeader'
 import headerStyles from '../../components/layout/PageHeader.module.css'
@@ -148,7 +149,7 @@ export default function EnergyTracker() {
 
             {aiAnalysis && (
               <div className={styles.aiInsightsPanel}>
-                <h3>✨ AI Insights</h3>
+                <h3><Sparkle size={20} color="var(--accent-light)" weight="duotone" style={{marginRight: '8px', verticalAlign: 'text-bottom'}} /> AI Insights</h3>
                 <p style={{ whiteSpace: 'pre-line' }}>{aiAnalysis}</p>
               </div>
             )}

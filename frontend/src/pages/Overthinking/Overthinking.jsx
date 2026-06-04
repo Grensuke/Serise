@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { X } from '@phosphor-icons/react'
 import AppLayout from '../../components/layout/AppLayout'
 import PageHeader from '../../components/layout/PageHeader'
 import headerStyles from '../../components/layout/PageHeader.module.css'
@@ -107,7 +108,7 @@ export default function Overthinking() {
                         aria-label="Delete reflection"
                         title="Remove this reflection"
                       >
-                        ✕
+                        <X size={14} weight="bold" />
                       </button>
                     </div>
                     <div className={styles.response}>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { PenNib, Lightbulb } from '@phosphor-icons/react'
 import styles from './Introducing.module.css'
 import sketch from '../../assets/sketch.png'
 
@@ -20,13 +21,13 @@ const Introducing = () => {
 
             <div className={styles.tiles}>
               <article className={styles.tile} data-glow>
-                <div className={styles.tileIcon}>✎</div>
+                <div className={styles.tileIcon}><PenNib weight="duotone" size={24} color="var(--accent)" /></div>
                 <h3 className={styles.tileTitle}>Reflect Clearly</h3>
                 <p className={styles.tileSubtitle}>Conversation logs with AI insights</p>
               </article>
 
               <article className={styles.tile} data-glow>
-                <div className={styles.tileIcon}>☺</div>
+                <div className={styles.tileIcon}><Lightbulb weight="duotone" size={24} color="var(--accent)" /></div>
                 <h3 className={styles.tileTitle}>Understand</h3>
                 <p className={styles.tileSubtitle}>Insights from your interactions</p>
               </article>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { X, Check, CheckCircle } from '@phosphor-icons/react'
 import AppLayout from '../../components/layout/AppLayout'
 import PageHeader from '../../components/layout/PageHeader'
 import headerStyles from '../../components/layout/PageHeader.module.css'
@@ -139,7 +140,7 @@ export default function Goals() {
                         aria-label="Delete goal"
                         title="Delete goal"
                       >
-                        ✕
+                        <X size={14} weight="bold" />
                       </button>
                     </div>
 
@@ -184,11 +185,11 @@ export default function Goals() {
                               className="btn btn-primary"
                               onClick={() => updateProgress(id, 100)}
                             >
-                              ✓ Done
+                              <Check size={16} weight="bold" /> Done
                             </button>
                           )}
                           {progress === 100 && (
-                            <span className={styles.completedBadge}>🎉 Complete!</span>
+                            <span className={styles.completedBadge}><CheckCircle size={16} weight="fill" /> Complete!</span>
                           )}
                         </div>
                       </div>

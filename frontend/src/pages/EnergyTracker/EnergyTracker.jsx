@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import PageHeader from '../../components/layout/PageHeader'
 import headerStyles from '../../components/layout/PageHeader.module.css'
-import { apiFetch, authHeaders } from '../../utils/api'
+import { apiJson, authHeaders } from '../../utils/api'
 import styles from './EnergyTracker.module.css'
 
 export default function EnergyTracker() {
@@ -14,9 +14,11 @@ export default function EnergyTracker() {
   const [saving, setSaving] = useState(false)
   const [aiAnalysis, setAiAnalysis] = useState('')
   const [aiLoading, setAiLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [saveError, setSaveError] = useState('')
 
   const ACTIVITY_OPTIONS = [
-    'Meeting', 'Party', 'Deep Work', 'Reading', 
+    'Meeting', 'Party', 'Deep Work', 'Reading',
     'Socializing', 'Family Time', 'Running Errands', 'Relaxing'
   ]
 
@@ -25,24 +27,25 @@ export default function EnergyTracker() {
   }
 
   useEffect(() => {
-    apiFetch('/api/energy', { headers: authHeaders() })
-      .then((r) => r.json())
+    apiJson('/api/energy', { headers: authHeaders() })
       .then((data) => { setLogs(Array.isArray(data) ? data : []); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch((err) => { setError(err.message || 'Failed to load energy logs'); setLoading(false) })
   }, [])
 
   const save = async () => {
     setSaving(true)
+    setSaveError('')
     try {
-      const res = await apiFetch('/api/energy', {
+      const data = await apiJson('/api/energy', {
         method: 'POST',
         headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ level, note, activities }),
       })
-      const data = await res.json()
       setLogs((prev) => [data, ...prev])
       setNote('')
       setActivities([])
+    } catch (err) {
+      setSaveError(err.message || 'Failed to save energy log')
     } finally {
       setSaving(false)
     }
@@ -57,8 +60,7 @@ export default function EnergyTracker() {
   const handleAnalyze = async () => {
     setAiLoading(true)
     try {
-      const res = await apiFetch('/api/energy/analyze', { headers: authHeaders() })
-      const data = await res.json()
+      const data = await apiJson('/api/energy/analyze', { headers: authHeaders() })
       setAiAnalysis(data.analysis || 'Analysis failed.')
     } catch (err) {
       console.error(err)
@@ -76,6 +78,8 @@ export default function EnergyTracker() {
           subtitle="Log how much social energy you have right now."
           stats={<span className={headerStyles.statChip}><strong>{logs.length}</strong> logs</span>}
         />
+
+        {error && <p className={styles.bannerError} role="alert">{error}</p>}
 
         <div className={styles.layout}>
           <section className={`ui-card ${styles.inputCard}`}>
@@ -104,9 +108,9 @@ export default function EnergyTracker() {
               <label className="form-label">Activities (optional)</label>
               <div className={styles.activityWrap}>
                 {ACTIVITY_OPTIONS.map(act => (
-                  <button 
+                  <button
                     key={act}
-                    type="button" 
+                    type="button"
                     className={`${styles.activityChip} ${activities.includes(act) ? styles.activityChipActive : ''}`}
                     onClick={() => toggleActivity(act)}
                   >
@@ -127,6 +131,8 @@ export default function EnergyTracker() {
               />
             </div>
 
+            {saveError && <p className={styles.bannerError} role="alert">{saveError}</p>}
+
             <button type="button" className="btn btn-primary" onClick={save} disabled={saving}>
               {saving ? 'Saving…' : 'Log energy'}
             </button>
@@ -139,7 +145,7 @@ export default function EnergyTracker() {
                 {aiLoading ? 'Analyzing...' : 'Analyze Trends'}
               </button>
             </div>
-            
+
             {aiAnalysis && (
               <div className={styles.aiInsightsPanel}>
                 <h3>✨ AI Insights</h3>

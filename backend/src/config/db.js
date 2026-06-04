@@ -5,8 +5,6 @@ mongoose.set('bufferCommands', false);
 
 module.exports = function connectDB(uri){
   return mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of hanging indefinitely
   });
 };

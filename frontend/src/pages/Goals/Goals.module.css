@@ -1,3 +1,15 @@
+.page {}
+
+.bannerError {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid rgba(176, 0, 32, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
 .formCard {
   margin-bottom: 24px;
 }
@@ -24,17 +36,22 @@
   flex-shrink: 0;
 }
 
+.goalsSection {}
+
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
 }
 
 .goalItem {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .goalHeader {
@@ -42,7 +59,14 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 8px;
-  margin-bottom: 16px;
+}
+
+.goalMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .goalTitle {
@@ -56,21 +80,51 @@
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
-  padding: 4px 10px;
+  padding: 3px 10px;
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent);
-  flex-shrink: 0;
+  width: fit-content;
 }
 
-.progressWrap {
+.deleteBtn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 150ms;
+}
+
+.deleteBtn:hover {
+  opacity: 1;
+}
+
+/* Progress section */
+.progressSection {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progressTopRow {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+}
+
+.progressLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.progressValue {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--accent);
 }
 
 .progressBar {
-  flex: 1;
   height: 8px;
   background: var(--surface-muted);
   border-radius: 999px;
@@ -84,9 +138,43 @@
   transition: width 300ms ease;
 }
 
-.progressLabel {
+.progressControls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.progressSlider {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.progressBtns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.progressBtns .btn {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+}
+
+.completedBadge {
   font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--accent);
-  min-width: 36px;
+  font-weight: 600;
+  color: var(--success);
+  margin-left: 4px;
+}
+
+@media (max-width: 600px) {
+  .formRow {
+    flex-direction: column;
+  }
+  .cadenceField {
+    width: 100%;
+  }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import PageHeader from '../../components/layout/PageHeader'
 import headerStyles from '../../components/layout/PageHeader.module.css'
-import { apiFetch, authHeaders } from '../../utils/api'
+import { apiJson, authHeaders } from '../../utils/api'
 import styles from './Overthinking.module.css'
 
 export default function Overthinking() {
@@ -10,28 +10,45 @@ export default function Overthinking() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [actionError, setActionError] = useState('')
 
   useEffect(() => {
-    apiFetch('/api/overthinking', { headers: authHeaders() })
-      .then((r) => r.json())
+    apiJson('/api/overthinking', { headers: authHeaders() })
       .then((d) => { setEntries(Array.isArray(d) ? d : []); setInitialLoading(false) })
-      .catch(() => setInitialLoading(false))
+      .catch((err) => { setError(err.message || 'Failed to load entries'); setInitialLoading(false) })
   }, [])
 
   const submit = async () => {
     if (!thought.trim()) return
     setLoading(true)
+    setError('')
     try {
-      const res = await apiFetch('/api/overthinking', {
+      const data = await apiJson('/api/overthinking', {
         method: 'POST',
         headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ thought }),
       })
-      const data = await res.json()
       setEntries((prev) => [data, ...prev])
       setThought('')
+    } catch (err) {
+      setError(err.message || 'Failed to submit thought')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const deleteEntry = async (id) => {
+    if (!confirm('Remove this reflection?')) return
+    setActionError('')
+    try {
+      await apiJson(`/api/overthinking/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+      })
+      setEntries((prev) => prev.filter((e) => (e._id || e.id) !== id))
+    } catch (err) {
+      setActionError(err.message || 'Failed to delete reflection')
     }
   }
 
@@ -43,6 +60,9 @@ export default function Overthinking() {
           subtitle="Write down an anxious thought and get a calmer perspective."
           stats={<span className={headerStyles.statChip}><strong>{entries.length}</strong> reflections</span>}
         />
+
+        {error && <p className={styles.bannerError} role="alert">{error}</p>}
+        {actionError && <p className={styles.bannerError} role="alert">{actionError}</p>}
 
         <section className={`ui-card ${styles.inputCard}`}>
           <div className="form-field">
@@ -74,15 +94,29 @@ export default function Overthinking() {
             <p className="empty-state">No entries yet. Share your first thought above.</p>
           ) : (
             <div className={styles.entries}>
-              {entries.map((e) => (
-                <article key={e._id || e.id} className={`ui-card ${styles.entry}`}>
-                  <blockquote className={styles.thought}>"{e.thought}"</blockquote>
-                  <div className={styles.response}>
-                    <span className={styles.responseLabel}>Perspective</span>
-                    <p className={styles.ai}>{e.aiResponse}</p>
-                  </div>
-                </article>
-              ))}
+              {entries.map((e) => {
+                const id = e._id || e.id
+                return (
+                  <article key={id} className={`ui-card ${styles.entry}`}>
+                    <div className={styles.entryHead}>
+                      <blockquote className={styles.thought}>"{e.thought}"</blockquote>
+                      <button
+                        type="button"
+                        className={`btn btn-danger ${styles.deleteBtn}`}
+                        onClick={() => deleteEntry(id)}
+                        aria-label="Delete reflection"
+                        title="Remove this reflection"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <div className={styles.response}>
+                      <span className={styles.responseLabel}>Perspective</span>
+                      <p className={styles.ai}>{e.aiResponse}</p>
+                    </div>
+                  </article>
+                )
+              })}
             </div>
           )}
         </section>

@@ -1,0 +1,231 @@
+/* Mirrors Login.module.css — same auth shell, with success state additions */
+:root {
+  --section-max-width: 1280px;
+  --section-padding: 28px;
+  --login-form-width: 500px;
+}
+
+.authSection {
+  width: 100%;
+  height: 100vh;
+  background: var(--surface-muted);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.authContainer {
+  max-width: var(--section-max-width);
+  margin: 0 auto;
+  padding: 0 var(--section-padding);
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 24px;
+  align-items: center;
+  height: 100%;
+}
+
+.leftCol {
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.brandSmall {
+  font-family: 'Fleur De Leah', cursive;
+  color: var(--text);
+  font-size: 72px;
+  margin-bottom: 12px;
+  text-decoration: none;
+}
+
+.trio { margin-top: 24px; }
+
+.trioLine {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(44px, 7vw, 96px);
+  color: var(--text);
+  line-height: 0.95;
+}
+
+.trioLineAccent {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(44px, 7vw, 96px);
+  color: var(--accent);
+  line-height: 0.95;
+  font-weight: 700;
+}
+
+.copy {
+  margin-top: 36px;
+  color: var(--text-muted);
+}
+
+.rightCol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  height: 100%;
+}
+
+.cardWrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.loginCard {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 48px 36px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.loginTitle {
+  margin: 0 0 12px 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  margin: 0 0 20px;
+  max-width: var(--login-form-width);
+}
+
+.form {
+  margin-top: 8px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.formGroup {
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: var(--text);
+  width: var(--login-form-width);
+  max-width: 100%;
+}
+
+.input {
+  width: var(--login-form-width);
+  max-width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+}
+
+.input:focus { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
+
+.error { color: var(--danger); font-size: 13px; margin-top: 4px; }
+
+.btnPrimary {
+  width: var(--login-form-width);
+  max-width: 100%;
+  margin-top: 14px;
+  padding: 14px 18px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  border: none;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  transition: background 150ms;
+}
+
+.btnPrimary:hover { background: var(--accent-light); color: #fff; }
+
+.formFooter {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: var(--login-form-width);
+  max-width: 100%;
+}
+
+.link { color: var(--accent); text-decoration: none; font-size: 14px; }
+
+/* Success state */
+.successState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  max-width: var(--login-form-width);
+}
+
+.successIcon {
+  font-size: 56px;
+  margin-bottom: 4px;
+}
+
+.successDesc {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.successHint {
+  font-size: 0.875rem;
+  color: var(--text-subtle);
+  margin: 0;
+}
+
+.retryLink {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+@media (max-width: 920px) {
+  .authContainer { grid-template-columns: 1fr 360px; }
+}
+
+@media (max-width: 700px) {
+  .authContainer { grid-template-columns: 1fr; padding-top: 20px; }
+  .leftCol { order: 2; text-align: center; }
+  .rightCol { order: 1; padding-top: 14px; }
+  .brandSmall { font-size: 40px; }
+  .copy { margin-top: 18px; }
+  .trio { display: none; }
+  .authSection { position: static; height: auto; overflow: auto; }
+  .loginCard { padding: 32px 20px; }
+}

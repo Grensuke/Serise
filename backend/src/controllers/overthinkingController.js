@@ -25,3 +25,15 @@ exports.list = async (req, res, next) => {
 		return next(e);
 	}
 };
+
+exports.remove = async (req, res, next) => {
+	try {
+		const userId = req.user && req.user.id;
+		const doc = await OverthinkingEntry.findOneAndDelete({ _id: req.params.id, user: userId });
+		if (!doc) return res.status(404).json({ msg: 'not found' });
+		return res.json({ ok: true, id: doc._id });
+	} catch (e) {
+		console.error('overthinking delete error:', e.message);
+		return next(e);
+	}
+};

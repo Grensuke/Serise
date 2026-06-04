@@ -13,6 +13,7 @@ import Simulator from '../pages/Simulator/Simulator';
 import Scripts from '../pages/Scripts/Scripts';
 import Goals from '../pages/Goals/Goals';
 import ProfilePage from '../pages/Profile/Profile';
+import Forgot from '../pages/Auth/Forgot';
 import NavBar from '../components/layout/Navbar';
 
 function RouterWithNav() {
@@ -43,6 +44,7 @@ function RouterWithNav() {
           <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/signup" element={<Signup />} />
+          <Route path="/auth/forgot" element={<Forgot />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/vault" element={<ProtectedRoute><MemoryVault /></ProtectedRoute>} />
           <Route path="/energy" element={<ProtectedRoute><EnergyTracker /></ProtectedRoute>} />

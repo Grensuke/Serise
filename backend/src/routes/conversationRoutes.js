@@ -5,7 +5,7 @@ const auth = require('../middleware/authMiddleware');
 
 router.post('/', auth, controller.create);
 router.get('/', auth, controller.list);
-router.get('/:id/analyze', auth, controller.analyze);
+router.get('/:id/insights', auth, controller.analyze);
 router.get('/:id', auth, controller.getOne);
 router.put('/:id', auth, controller.update);
 router.delete('/:id', auth, controller.remove);

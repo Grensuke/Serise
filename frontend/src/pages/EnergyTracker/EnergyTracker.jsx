@@ -61,7 +61,7 @@ export default function EnergyTracker() {
   const handleAnalyze = async () => {
     setAiLoading(true)
     try {
-      const data = await apiJson('/api/energy/analyze', { headers: authHeaders() })
+      const data = await apiJson('/api/energy/insights', { headers: authHeaders() })
       setAiAnalysis(data.analysis || 'Analysis failed.')
     } catch (err) {
       console.error(err)

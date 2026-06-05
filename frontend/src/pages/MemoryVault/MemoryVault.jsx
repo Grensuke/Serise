@@ -138,7 +138,7 @@ export default function MemoryVault() {
     setAiLoading(true)
     setAiError('')
     try {
-      const data = await apiJson(`/api/conversations/${id}/analyze`, { headers: authHeaders() })
+      const data = await apiJson(`/api/conversations/${id}/insights`, { headers: authHeaders() })
       setAiInsights(data)
       setItems((prev) => prev.map((it) => ((it._id || it.id) === id ? { ...it, analysis: data } : it)))
       setSelected((prev) => (prev && (prev._id || prev.id) === id ? { ...prev, analysis: data } : prev))

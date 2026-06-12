@@ -68,7 +68,7 @@ exports.simulate = async (prompt, opts = {}) => {
       let finalPrompt = prompt;
       
       // If it's a conversation scenario, instruct Gemini strictly.
-      if (opts.scenario && !['coach', 'analysis', 'general'].includes(opts.scenario)) {
+      if (opts.scenario && !['coach', 'analysis', 'general', 'energy_analysis'].includes(opts.scenario)) {
         finalPrompt = `You are an AI acting as a ${opts.role || 'partner'} in a roleplay simulation. 
 Scenario context: ${opts.scenario}
 Your persona tone: ${opts.tone || 'Friendly'}

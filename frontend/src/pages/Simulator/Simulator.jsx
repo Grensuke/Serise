@@ -184,7 +184,13 @@ AI:`
       console.error('AI Analysis failed during save', err)
     }
 
-    const body = { summary: transcript.slice(0,300), transcript, mood: 'confident', tags: ['simulation'] }
+    const body = { 
+      summary: analysisObj?.summary || transcript.slice(0,300), 
+      title: `Simulation: ${scenario.title}`,
+      transcript, 
+      mood: 'confident', 
+      tags: ['simulation'] 
+    }
     if (analysisObj) body.analysis = analysisObj
 
     try {

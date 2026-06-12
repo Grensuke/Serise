@@ -120,6 +120,7 @@ export default function MemoryVault() {
     if (match) {
       setSelected(match)
       setShowDetailMobile(true)
+      window.history.replaceState({}, '')
     }
   }, [items, location.state?.selectedId])
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { ChatCircle, Target, CaretLeft } from '@phosphor-icons/react'
 import AppLayout from '../../components/layout/AppLayout'
-import PageHeader from '../../components/layout/PageHeader'
 import headerStyles from '../../components/layout/PageHeader.module.css'
 import { apiJson, authHeaders } from '../../utils/api'
 import { logout } from '../../utils/auth'
@@ -78,34 +78,58 @@ export default function Profile() {
     )
   }
 
-  const stats = (
-    <>
-      <span className={headerStyles.statChip}><strong>{profile?.conversationCount ?? 0}</strong> conversations</span>
-      <span className={headerStyles.statChip}><strong>{profile?.goalCount ?? 0}</strong> goals</span>
-    </>
-  )
+  const initial = profile?.name ? profile.name.charAt(0).toUpperCase() : 'U'
 
   return (
     <AppLayout>
       <div className={`page-shell ${styles.page}`}>
-        <PageHeader
-          title={profile?.name || 'Your Profile'}
-          subtitle="Manage your account and view your activity."
-          stats={stats}
-        />
+        <Link to="/dashboard" className={styles.backLink}>
+          <CaretLeft size={18} weight="bold" />
+          Back to Dashboard
+        </Link>
+        <div className={styles.heroSection}>
+          <div className={styles.avatarWrap}>
+            <div className={styles.avatarGlow} aria-hidden />
+            <div className={styles.avatar}>{initial}</div>
+          </div>
+          <div className={styles.heroText}>
+            <h1 className={styles.heroTitle}>{profile?.name || 'Your Profile'}</h1>
+            <p className={styles.heroSubtitle}>Manage your account and view your activity.</p>
+          </div>
+        </div>
 
         {error && <p className={styles.error} role="alert">{error}</p>}
         {saved && <p className={styles.success} role="status">Profile saved successfully.</p>}
 
         <div className={styles.grid}>
-          <section className={`ui-card ${styles.card}`}>
-            <h2 className={styles.cardTitle}>Account details</h2>
+          <section className={`ui-card ${styles.card} ${styles.activityCard}`}>
+            <h2 className={styles.cardTitle}>Your Activity</h2>
+            <div className={styles.stats}>
+              <Link to="/vault" className={styles.statBox}>
+                <div className={styles.statIconWrap}><ChatCircle weight="duotone" size={28} /></div>
+                <div className={styles.statContent}>
+                  <span className={styles.statNum}>{profile?.conversationCount ?? 0}</span>
+                  <span className={styles.statLabel}>Conversations</span>
+                </div>
+              </Link>
+              <Link to="/goals" className={styles.statBox}>
+                <div className={styles.statIconWrap}><Target weight="duotone" size={28} /></div>
+                <div className={styles.statContent}>
+                  <span className={styles.statNum}>{profile?.goalCount ?? 0}</span>
+                  <span className={styles.statLabel}>Goals</span>
+                </div>
+              </Link>
+            </div>
+          </section>
+
+          <section className={`ui-card ${styles.card} ${styles.accountCard}`}>
+            <h2 className={styles.cardTitle}>Account Details</h2>
             <form onSubmit={handleSave}>
               <div className="form-field">
                 <label htmlFor="profile-name" className="form-label">Name</label>
                 <input
                   id="profile-name"
-                  className="form-input"
+                  className={`form-input ${styles.softInput}`}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
@@ -120,7 +144,7 @@ export default function Profile() {
                 <label htmlFor="profile-bio" className="form-label">Bio</label>
                 <textarea
                   id="profile-bio"
-                  className="form-textarea"
+                  className={`form-textarea ${styles.softInput}`}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   placeholder="A short note about yourself…"
@@ -129,30 +153,16 @@ export default function Profile() {
                 />
                 <span className={styles.charCount}>{bio.length}/500</span>
               </div>
-              <button type="submit" className="btn btn-primary" disabled={saving}>
+              <button type="submit" className={`btn ${styles.gradientBtn}`} disabled={saving}>
                 {saving ? 'Saving…' : 'Save changes'}
               </button>
             </form>
           </section>
 
-          <section className={`ui-card ${styles.card}`}>
-            <h2 className={styles.cardTitle}>Your activity</h2>
-            <div className={styles.stats}>
-              <Link to="/vault" className={styles.statBox}>
-                <span className={styles.statNum}>{profile?.conversationCount ?? 0}</span>
-                <span className={styles.statLabel}>Conversations</span>
-              </Link>
-              <Link to="/goals" className={styles.statBox}>
-                <span className={styles.statNum}>{profile?.goalCount ?? 0}</span>
-                <span className={styles.statLabel}>Goals</span>
-              </Link>
-            </div>
-          </section>
-
-          <section className={`ui-card ${styles.dangerZone}`}>
+          <section className={`ui-card ${styles.card} ${styles.dangerZone}`}>
             <h2 className={styles.cardTitle}>Session</h2>
             <p className={styles.dangerDesc}>Sign out of your account on this device.</p>
-            <button type="button" className="btn btn-danger" onClick={handleLogout}>
+            <button type="button" className={`btn ${styles.dangerBtn}`} onClick={handleLogout}>
               Log out
             </button>
           </section>

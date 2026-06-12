@@ -131,8 +131,8 @@ Your app should now be running at `http://localhost:5173`.
 ## 🔒 Authentication Flow
 Serise uses a robust JWT-based authentication system. On successful login or signup, a token is stored securely in `localStorage` and sent via an Authorization Bearer header on every protected API request. 
 
-## 🌙 Blended Dark Mode
-Serise features a premium, non-pure-black dark mode powered by CSS variables (`--surface-muted`, `--text-subtle`, etc.) for maximum readability. Users can toggle this preference using the Navbar, and it persists in `localStorage`.
+## 🌓 Dynamic Theming & Glassmorphism
+Serise features a premium, responsive design that adapts beautifully to both **Light** and **Dark** modes. The UI incorporates state-of-the-art glassmorphism, dynamic gradients, and micro-animations to create an engaging experience. Users can toggle their preference using the Navbar, and it persists in `localStorage`.
 
 ---
 

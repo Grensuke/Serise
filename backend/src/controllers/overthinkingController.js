@@ -6,7 +6,7 @@ exports.submit = async (req, res, next) => {
 		const userId = req.user && req.user.id;
 		const { thought } = req.body;
 		// generate AI response (may be stub)
-		const ai = await aiService.analyze(thought, { userId });
+		const ai = await aiService.analyze(thought, { userId, type: 'overthinking' });
 		const entry = await OverthinkingEntry.create({ user: userId, thought, aiResponse: ai.text || JSON.stringify(ai) });
 		return res.json(entry);
 	} catch (e) {

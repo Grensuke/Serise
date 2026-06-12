@@ -56,6 +56,22 @@ Serise/
 
 ---
 
+## 🔌 API Routes
+
+Here is a summary of the core API endpoints that power Serise:
+
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/signup` | Register a new user | No |
+| `POST` | `/api/auth/login` | Authenticate and retrieve JWT token | No |
+| `GET` | `/api/conversations` | Retrieve all memory vault logs | Yes |
+| `POST` | `/api/conversations` | Log a new conversation to the vault | Yes |
+| `GET` | `/api/conversations/:id/insights`| Get AI-generated insights for a specific log | Yes |
+| `POST` | `/api/simulate` | Run an interactive AI conversation simulation | Yes |
+| `GET` | `/api/goals` | List all user active goals | Yes |
+
+---
+
 ## 🚀 Getting Started
 
 Follow these steps to set up Serise locally on your machine.

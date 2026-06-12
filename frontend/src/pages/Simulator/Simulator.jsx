@@ -145,9 +145,22 @@ AI:`
     if (!lastUser) return
     setCoachLoading(true)
     try {
-      const prompt = `Suggest 3 short, better alternative ways to say: "${lastUser.text}" in a ${tone} tone. Keep it encouraging.`
+      const prompt = `Suggest 3 short, better alternative ways to say: "${lastUser.text}" in a ${tone} tone. Return ONLY a JSON object with a key "alternatives" containing an array of strings. Keep it encouraging.`
       const data = await apiJson('/api/simulate', { method:'POST', headers: authHeaders({ 'Content-Type':'application/json' }), body: JSON.stringify({ prompt, scenario: 'coach' }) })
-      setCoachAlternatives(data.result?.reply || data.result || data.reply || 'No suggestions.')
+      
+      const reply = data.result?.reply || data.result || data.reply || ''
+      let obj = {}
+      try { 
+        obj = typeof reply === 'string' ? JSON.parse(reply.replace(/^```json\s*/, '').replace(/\s*```$/, '')) : reply 
+      } catch (err) { 
+        console.error('Parse error', err)
+      }
+      
+      if (obj.alternatives && Array.isArray(obj.alternatives)) {
+        setCoachAlternatives(obj.alternatives.map(a => `• ${a}`).join('\n'))
+      } else {
+        setCoachAlternatives(reply)
+      }
     } catch(err) {
       console.error(err)
       setCoachAlternatives('Failed to generate alternatives.')

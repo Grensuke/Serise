@@ -13,22 +13,29 @@ if (geminiKey) {
 exports.analyze = async (text, opts = {}) => {
   if (model) {
     try {
-      const prompt = `Analyze the following conversation context. Focus on the tone and providing encouraging advice.
-      Conversation: ${text}
-      Options: ${JSON.stringify(opts)}
-      Return a JSON response (without markdown block formatting, just raw JSON string) containing keys: text (string summary), sentiment (positive/cautious/neutral), tone (string), confidence (number 0-100), keyPoints (array of strings), suggestions (array of strings), reassurance (string).`;
-      
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      let textRes = response.text();
-      
-      if (textRes.startsWith('```json')) {
-        textRes = textRes.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      let prompt = '';
+      if (opts.type === 'overthinking') {
+        prompt = `Analyze the following anxious or overthinking thought. Focus on cognitive reframing and providing grounded, calming advice.
+Thought: ${text}
+Return a JSON response (without markdown block formatting, just raw JSON string) containing keys: text (string summary of reframed thought), sentiment (positive/cautious/neutral), tone (string), confidence (number 0-100), keyPoints (array of strings), suggestions (array of actionable reframing steps), reassurance (string).`;
+      } else {
+        prompt = `Analyze the following conversation context. Focus on the tone and providing encouraging advice.
+Conversation: ${text}
+Options: ${JSON.stringify(opts)}
+Return a JSON response (without markdown block formatting, just raw JSON string) containing keys: text (string summary), sentiment (positive/cautious/neutral), tone (string), confidence (number 0-100), keyPoints (array of strings), suggestions (array of strings), reassurance (string).`;
       }
+      
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json" }
+      });
+      const response = await result.response;
+      let textRes = response.text().trim();
       
       return JSON.parse(textRes);
     } catch (e) {
       console.error('gemini analyze error', e.message);
+      throw new Error(`AI Analysis Failed: ${e.message}`);
     }
   }
 
@@ -58,19 +65,39 @@ exports.analyze = async (text, opts = {}) => {
 exports.simulate = async (prompt, opts = {}) => {
   if (model) {
     try {
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      let text = response.text();
+      let finalPrompt = prompt;
       
-      if (text.startsWith('```json')) {
-        text = text.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      // If it's a conversation scenario, instruct Gemini strictly.
+      if (opts.scenario && !['coach', 'analysis', 'general'].includes(opts.scenario)) {
+        finalPrompt = `You are an AI acting as a ${opts.role || 'partner'} in a roleplay simulation. 
+Scenario context: ${opts.scenario}
+Your persona tone: ${opts.tone || 'Friendly'}
+Difficulty level: ${opts.difficulty || 'Normal'}
+INSTRUCTIONS: Respond ONLY as your character. Provide exactly one reply to continue the conversation. Do not break character. Do not include extra commentary or analyze the dialogue.
+
+${prompt}`;
+      } else if (opts.scenario === 'coach' || opts.scenario === 'analysis') {
+        finalPrompt = `INSTRUCTIONS: You must act as an objective analysis engine. Provide ONLY the requested JSON object without any markdown formatting or extra text.\n\n${prompt}`;
       }
+
+      let requestPayload = {
+        contents: [{ role: 'user', parts: [{ text: finalPrompt }] }]
+      };
+
+      if (opts.scenario === 'coach' || opts.scenario === 'analysis') {
+        requestPayload.generationConfig = { responseMimeType: "application/json" };
+      }
+
+      const result = await model.generateContent(requestPayload);
+      const response = await result.response;
+      let text = response.text().trim();
 
       return { reply: text };
     } catch (e) {
       console.error('gemini simulate error', e.message);
+      return { reply: `[AI Error]: ${e.message}. Please try again.` };
     }
   }
   // simple echo stub
-  return { reply: `Simulated reply (stub) for prompt: ${prompt}` };
+  return { reply: `Simulated reply (stub) for prompt: ${prompt.slice(0, 50)}...` };
 };

@@ -8,14 +8,14 @@ import styles from './Simulator.module.css'
 import { apiJson, authHeaders } from '../../utils/api'
 
 const SCENARIOS = [
-  { id: 'smalltalk', title: 'Small Talk Practice', icon: <Coffee weight="duotone" size={32} color="#f59e0b" />, desc: 'Practice casual conversation starters.' },
-  { id: 'ask-teacher', title: 'Asking a Doubt to a Teacher', icon: <Question weight="duotone" size={32} color="#38bdf8" />, desc: 'Politely ask for clarification.' },
-  { id: 'classmate', title: 'Start with a Classmate', icon: <Users weight="duotone" size={32} color="#10b981" />, desc: 'Open a friendly chat.' },
-  { id: 'awkward', title: 'Handling Awkward Silence', icon: <SpeakerSlash weight="duotone" size={32} color="#f43f5e" />, desc: 'Smoothly recover the conversation.' },
-  { id: 'say-no', title: 'Saying No Politely', icon: <Prohibit weight="duotone" size={32} color="#ef4444" />, desc: 'Decline without guilt.' },
-  { id: 'end', title: 'Ending Gracefully', icon: <DoorOpen weight="duotone" size={32} color="#a855f7" />, desc: 'Wrap up a talk warmly.' },
-  { id: 'apologize', title: 'Apologizing', icon: <Handshake weight="duotone" size={32} color="#ec4899" />, desc: 'Say sorry sincerely.' },
-  { id: 'new-message', title: 'Messaging Someone New', icon: <PaperPlaneRight weight="duotone" size={32} color="#0ea5e9" />, desc: 'Start a DM with confidence.' },
+  { id: 'smalltalk', title: 'Small Talk Practice', defaultRole: 'stranger', icon: <Coffee weight="duotone" size={32} color="#f59e0b" />, desc: 'Practice casual conversation starters.' },
+  { id: 'ask-teacher', title: 'Asking a Doubt to a Teacher', defaultRole: 'teacher', icon: <Question weight="duotone" size={32} color="#38bdf8" />, desc: 'Politely ask for clarification.' },
+  { id: 'classmate', title: 'Start with a Classmate', defaultRole: 'classmate', icon: <Users weight="duotone" size={32} color="#10b981" />, desc: 'Open a friendly chat.' },
+  { id: 'awkward', title: 'Handling Awkward Silence', defaultRole: 'stranger', icon: <SpeakerSlash weight="duotone" size={32} color="#f43f5e" />, desc: 'Smoothly recover the conversation.' },
+  { id: 'say-no', title: 'Saying No Politely', defaultRole: 'friend', icon: <Prohibit weight="duotone" size={32} color="#ef4444" />, desc: 'Decline without guilt.' },
+  { id: 'end', title: 'Ending Gracefully', defaultRole: 'friend', icon: <DoorOpen weight="duotone" size={32} color="#a855f7" />, desc: 'Wrap up a talk warmly.' },
+  { id: 'apologize', title: 'Apologizing', defaultRole: 'friend', icon: <Handshake weight="duotone" size={32} color="#ec4899" />, desc: 'Say sorry sincerely.' },
+  { id: 'new-message', title: 'Messaging Someone New', defaultRole: 'stranger', icon: <PaperPlaneRight weight="duotone" size={32} color="#0ea5e9" />, desc: 'Start a DM with confidence.' },
 ]
 
 export default function Simulator(){
@@ -45,8 +45,10 @@ export default function Simulator(){
   useEffect(()=>{ if(scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight }, [messages, aiTyping])
 
   const startScenario = (s) => {
+    const selectedRole = s.defaultRole || 'classmate'
     setScenario(s)
-    setMessages([{ id:'sys', who:'ai', text: `Scenario: ${s.title}. The AI will play a ${role} in a ${tone} tone. Say hi to begin.` }])
+    setRole(selectedRole)
+    setMessages([{ id:'sys', who:'ai', text: `Scenario: ${s.title}. The AI will play a ${selectedRole} in a ${tone} tone. Say hi to begin.` }])
     setStage('chat')
     setInput('')
     setCoachAnalysis('')

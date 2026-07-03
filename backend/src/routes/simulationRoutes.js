@@ -3,6 +3,6 @@ const router = express.Router();
 const controller = require('../controllers/simulationController');
 const auth = require('../middleware/authMiddleware');
 
-router.post('/', auth, controller.run);
+router.post('/', auth, controller.simulate);
 
 module.exports = router;

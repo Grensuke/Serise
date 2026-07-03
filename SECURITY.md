@@ -33,7 +33,7 @@ Treat them as **compromised**:
 
 1. **Rotate** MongoDB password, JWT secret, and any API keys (Gemini, OpenAI).
 2. Update **`backend/.env`** locally with new values only.
-3. **Purge from Git history** — see [GIT_CLEANUP_STEPS.md](./GIT_CLEANUP_STEPS.md) (use BFG or `git filter-branch`).
+3. **Purge from Git history** — use BFG or `git filter-branch`.
 4. **Force-push** only if you understand the impact on collaborators.
 
 Do **not** paste real credentials into issues, PRs, or documentation.

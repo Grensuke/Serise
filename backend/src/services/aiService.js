@@ -2,16 +2,22 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { geminiKey } = require('../config/env');
 
 let genAI = null;
-let model = null;
+let model25 = null;
+let modelFallback = null;
+let modelLite = null;
+let try25After = 0; // Timestamp to retry model 2.5
+let try20After = 0; // Timestamp to retry model 2.0
 
 if (geminiKey) {
   genAI = new GoogleGenerativeAI(geminiKey);
-  model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  model25 = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  modelFallback = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  modelLite = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 }
 
 // Basic AI service that uses Gemini (if key provided) or falls back to a simple stub.
 exports.analyze = async (text, opts = {}) => {
-  if (model) {
+  if (model25 && modelFallback) {
     try {
       let prompt = '';
       if (opts.type === 'overthinking') {
@@ -25,15 +31,77 @@ Options: ${JSON.stringify(opts)}
 Return a JSON response (without markdown block formatting, just raw JSON string) containing keys: text (string summary), sentiment (positive/cautious/neutral), tone (string), confidence (number 0-100), keyPoints (array of strings), suggestions (array of strings), reassurance (string).`;
       }
       
-      const result = await model.generateContent({
+      const requestPayload = {
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: "application/json" }
-      });
+      };
+
+      let result;
+      
+      const executeWithFallback = async () => {
+        if (Date.now() >= try25After) {
+          try {
+            return await model25.generateContent(requestPayload);
+          } catch (err) {
+            if (err.message && (err.message.includes('429') || err.message.toLowerCase().includes('quota'))) {
+              const match = err.message.match(/retry in (\d+(?:\.\d+)?)s/i);
+              const delayMs = match ? parseFloat(match[1]) * 1000 + 1000 : 60 * 1000;
+              try25After = Date.now() + delayMs;
+              console.warn(`gemini-2.5-flash quota exceeded. Falling back to gemini-2.0-flash. Will retry 2.5 at ${new Date(try25After).toLocaleTimeString()}`);
+            } else {
+              throw err;
+            }
+          }
+        }
+        
+        if (Date.now() >= try20After) {
+          try {
+            return await modelFallback.generateContent(requestPayload);
+          } catch (err) {
+            if (err.message && (err.message.includes('429') || err.message.toLowerCase().includes('quota'))) {
+              const match = err.message.match(/retry in (\d+(?:\.\d+)?)s/i);
+              const delayMs = match ? parseFloat(match[1]) * 1000 + 1000 : 60 * 1000;
+              try20After = Date.now() + delayMs;
+              console.warn(`gemini-2.0-flash quota exceeded. Falling back to gemini-2.0-flash-lite. Will retry 2.0 at ${new Date(try20After).toLocaleTimeString()}`);
+            } else {
+              throw err;
+            }
+          }
+        }
+        
+        // If both are in backoff, use the lite model
+        try {
+          return await modelLite.generateContent(requestPayload);
+        } catch (err) {
+          if (err.message && (err.message.includes('429') || err.message.toLowerCase().includes('quota'))) {
+            const match = err.message.match(/retry in (\d+(?:\.\d+)?)s/i);
+            const delayMs = match ? parseFloat(match[1]) * 1000 + 1000 : 60 * 1000;
+            console.warn(`gemini-2.0-flash-lite quota exceeded. All models exhausted. Will retry lite at ${new Date(Date.now() + delayMs).toLocaleTimeString()}`);
+            throw new Error("QUOTA_EXHAUSTED");
+          }
+          throw err;
+        }
+      };
+
+      result = await executeWithFallback();
+
       const response = await result.response;
       let textRes = response.text().trim();
       
       return JSON.parse(textRes);
     } catch (e) {
+      if (e.message === "QUOTA_EXHAUSTED") {
+        return {
+          text: `[Quota Exhausted] Your daily Gemini quota is reached.`,
+          sentiment: 'neutral',
+          tone: 'neutral',
+          confidence: 50,
+          keyPoints: ['You have exhausted all daily AI quotas.'],
+          suggestions: ['Try again tomorrow or set up billing in Google AI Studio.'],
+          reassurance: `Don't worry, you can still reflect on this locally!`,
+          notes: []
+        };
+      }
       console.error('gemini analyze error', e.message);
       throw new Error(`AI Analysis Failed: ${e.message}`);
     }
@@ -63,7 +131,7 @@ Return a JSON response (without markdown block formatting, just raw JSON string)
 };
 
 exports.simulate = async (prompt, opts = {}) => {
-  if (model) {
+  if (model25 && modelFallback) {
     try {
       let finalPrompt = prompt;
       
@@ -88,12 +156,63 @@ ${prompt}`;
         requestPayload.generationConfig = { responseMimeType: "application/json" };
       }
 
-      const result = await model.generateContent(requestPayload);
-      const response = await result.response;
-      let text = response.text().trim();
+      let result;
+      
+      const executeWithFallback = async () => {
+        if (Date.now() >= try25After) {
+          try {
+            return await model25.generateContent(requestPayload);
+          } catch (err) {
+            if (err.message && (err.message.includes('429') || err.message.toLowerCase().includes('quota'))) {
+              const match = err.message.match(/retry in (\d+(?:\.\d+)?)s/i);
+              const delayMs = match ? parseFloat(match[1]) * 1000 + 1000 : 60 * 1000;
+              try25After = Date.now() + delayMs;
+              console.warn(`gemini-2.5-flash quota exceeded. Falling back to gemini-2.0-flash. Will retry 2.5 at ${new Date(try25After).toLocaleTimeString()}`);
+            } else {
+              throw err;
+            }
+          }
+        }
+        
+        if (Date.now() >= try20After) {
+          try {
+            return await modelFallback.generateContent(requestPayload);
+          } catch (err) {
+            if (err.message && (err.message.includes('429') || err.message.toLowerCase().includes('quota'))) {
+              const match = err.message.match(/retry in (\d+(?:\.\d+)?)s/i);
+              const delayMs = match ? parseFloat(match[1]) * 1000 + 1000 : 60 * 1000;
+              try20After = Date.now() + delayMs;
+              console.warn(`gemini-2.0-flash quota exceeded. Falling back to gemini-2.0-flash-lite. Will retry 2.0 at ${new Date(try20After).toLocaleTimeString()}`);
+            } else {
+              throw err;
+            }
+          }
+        }
+        
+        // If both are in backoff, use the lite model
+        try {
+          return await modelLite.generateContent(requestPayload);
+        } catch (err) {
+          if (err.message && (err.message.includes('429') || err.message.toLowerCase().includes('quota'))) {
+            const match = err.message.match(/retry in (\d+(?:\.\d+)?)s/i);
+            const delayMs = match ? parseFloat(match[1]) * 1000 + 1000 : 60 * 1000;
+            console.warn(`gemini-2.0-flash-lite quota exceeded. All models exhausted. Will retry lite at ${new Date(Date.now() + delayMs).toLocaleTimeString()}`);
+            throw new Error("QUOTA_EXHAUSTED");
+          }
+          throw err;
+        }
+      };
 
-      return { reply: text };
+      result = await executeWithFallback();
+
+      const response = await result.response;
+      let textRes = response.text().trim();
+
+      return { reply: textRes };
     } catch (e) {
+      if (e.message === "QUOTA_EXHAUSTED") {
+        return { reply: `[System]: You have exhausted your daily Gemini API quota for all models. Please try again later or configure a paid plan. Your prompt was: ${prompt.slice(0, 50)}...` };
+      }
       console.error('gemini simulate error', e.message);
       return { reply: `[AI Error]: ${e.message}. Please try again.` };
     }
